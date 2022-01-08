@@ -1,0 +1,89 @@
+#sidebar-nav {
+	width:160px;
+}
+#properties-nav {
+	width:230px;
+}
+#properties-nav label.form-label {
+	font-size: 0.8em;
+	margin: 0;
+}
+#properties-nav .input-group .input-group-text {
+	font-size: 0.8em;
+	padding: 8px;
+}
+#properties-nav .input-group.half {
+	width: 48%;
+	display: inline-flex;
+}
+#sidebar-nav .accordion-item,
+#properties-nav .accordion-item {
+	border: 0px;
+}
+#sidebar-nav .accordion-button,
+#properties-nav .accordion-button {
+	box-shadow: 0px 2px 5px #444;
+}
+.form-label.required:after {
+  content:"*";
+  color:red;
+}
+.widgetbtn {
+	display: inline-block;
+	width: 80px;
+	font-size:0.6em;
+	text-align: center;
+	color: lightgrey;}
+.widgetbtn > .widgetIcon {
+	font-size: 2em;
+	display:block;
+	color: lightgrey;
+}
+.widgetIcon.rowwidget {
+	width: 25px;
+	height: 15px;
+	border: 0.1em dotted lightgrey;
+	display: block;
+	margin:6px auto;
+}
+.edition {
+	padding: 0px 25px 0px 0px;
+}
+.edition .form-field {
+	position: relative;
+	border: 2px blue dotted;
+	padding: 10px;
+	box-shadow: 0 0 10px grey inset;
+	margin-bottom: 10px !important;
+	background: #EFEFEF;
+}
+.edition span.form-field-type {
+	position: absolute;
+	top: -11px;
+	background: lightgrey;
+	font-size: 0.7em;
+}
+.preview span.form-field-type {
+	display:none;
+}
+[draggable="true"] {
+	color: blue;
+	background-color: rgba(172,172,255,0.5);
+	
+}
+.dragArea.row {
+	padding: 15px 0px 15px 25px !important;
+}
+.dragArea.highlight {
+	background-color: rgba(255,204,128,0.6) !important;
+}
+.edition .form-field.currentField {
+	background-color: rgba(204,204,255,0.7) !important;
+}
+.ghost {
+	zoom:0.5;
+	padding:10px;
+	border: 2px #FF6600 dotted;
+	background-color: rgba(255,204,128,1) !important;
+	margin:10px 0;
+}
