@@ -8,18 +8,45 @@ Vue.component('my-header',{ template: '<nav class="navbar navbar-light bg-dark t
 				'<a data-bs-target="#sidebar-properties" data-bs-toggle="collapse" type="button" class="btn btn-outline-light"><i class="bi bi-braces"></i></a>'+
 			  '</template>'+
 			'</div>'+
+			'<div class="input-group mb-3" v-if="$store.state.formBackendUrl">'+
+				'<div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i class="bi bi-file-earmark-code"></i></span></div>'+
+				'<input type="text" class="form-control" placeholder="Form name" aria-label="Formname" v-model="$store.state.form.name">'+
+				'<div class="input-group-append"><button class="btn btn-outline-primary" v-on:click="saveForm()"><i class="bi bi-save"></i></button></div>'+
+			'</div>'+
 			'<div class="form-check">'+
 			  '<input class="form-check-input" type="checkbox" v-model="$store.state.preview" id="checkPreview">'+
 			  '<label class="form-check-label" for="checkPreview">Preview</label>'+
 			'</div>'+
 		'</div>'+
 	'</nav>',
-  props: ['apptitle']});
+  props: ['apptitle'],
+  methods: {
+	  saveForm() {
+		axios.post(this.$store.state.formBackendUrl, this.$store.state.form).then(response => {
+				  alert(response.data); 
+				}).catch(error => {
+				  alert(response.data); 
+				})
+	  }
+  }
+ });
 Vue.component('widget-side-bar',{
   template: '<div id="sidebar" class="collapse collapse-horizontal show border-end">'+
 				'<div id="sidebar-nav" class="list-group bg-secondary border-0 rounded-0 text-sm-start min-vh-100">'+
 				
-					'<div class="accordion" id="widgetAccordions" v-if="customwidgets.length>0">'+
+					'<div class="accordion bg-secondary" id="widgetAccordions" >'+
+						'<div class="accordion-item">'+
+							'<h2 class="accordion-header">'+
+								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#containers-widgets" aria-expanded="true" aria-controls="containers-widgets">Containers</button>'+
+							'</h2>'+
+							'<div id="containers-widgets" class="accordion-collapse collapse show" data-bs-parent="#widgetAccordions">'+
+								'<div class="bg-secondary">'+
+									'<draggable :list="containers" :group="{ name: \'form\', pull: \'clone\', put: false}" :clone="cloneWidget" :move="moveWidget" @end="endDrag">'+
+										'<div v-for="(widget, i) in containers" :key="i" class="widgetbtn">'+
+											' <i :class="\'widgetIcon \'+widget.props.icon"></i>{{ widget.display }}'+
+										'</div>'+
+									'</draggable>'+
+								'</div></div></div>'+
 						'<div class="accordion-item">'+
 							'<h2 class="accordion-header">'+
 								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#standard-widgets" aria-expanded="true" aria-controls="standard-widgets">Widgets</button>'+
@@ -32,7 +59,7 @@ Vue.component('widget-side-bar',{
 										'</div>'+
 									'</draggable>'+
 								'</div></div></div>'+
-						'<div class="accordion-item">'+
+						'<div class="accordion-item" v-if="customwidgets.length>0">'+
 							'<h2 class="accordion-header">'+
 								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#custom-widgets" aria-expanded="true" aria-controls="custom-widgets">Custom Widgets</button>'+
 							'</h2>'+
@@ -54,7 +81,7 @@ Vue.component('widget-side-bar',{
 				
 				'</div>'+
 			'</div>',
-  props: ['widgets', 'customwidgets'],
+  props: ['containers', 'widgets', 'customwidgets'],
   methods: {
 	cloneWidget(obj) {
 		var clone = JSON.parse(JSON.stringify(obj));
@@ -69,15 +96,15 @@ Vue.component('widget-side-bar',{
 		return clone;
 	},
 	moveWidget(evt) {
-		if (window.dropZone!=null) {
-			window.dropZone.classList.remove("highlight");
-		}
-		evt.to.classList.add("highlight");
-		window.dropZone = evt.to;
+		//if (window.dropZone!=null) {
+		//	window.dropZone.classList.remove("highlight");
+		//}
+		//evt.to.classList.add("highlight");
+		//window.dropZone = evt.to;
 	},
 	endDrag(evt) {
-		window.dropZone.classList.remove("highlight");
-		window.dropZone = null;
+		//window.dropZone.classList.remove("highlight");
+		//window.dropZone = null;
 	}
   }
 });
@@ -137,7 +164,7 @@ Vue.component('properties-side-bar',{
 								'</h2>'+
 								'<div id="properties-other" class="accordion-collapse collapse show">'+
 									'<div class="accordion-body bg-secondary">'+
-										'<div v-for="(prop, i) in $store.state.fieldTypeMap[$store.state.currentField.type]" :key="i">'+
+										'<div v-for="(prop, i) in $store.state.fieldTypeMap[$store.state.currentField.nature]" :key="i">'+
 											'<component :is="\'prop-\'+prop.type" :propdef="prop"></component>'+
 										'</div>'+
 									'</div>'+

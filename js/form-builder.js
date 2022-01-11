@@ -2,11 +2,11 @@ let template = '<my-header apptitle="Ed!t0r"></my-header>'+
 	'<div class="container-fluid">'+
 		'<div class="row flex-nowrap">'+
 			'<div class="col-auto px-0" v-if="!$store.state.preview" >'+
-				'<widget-side-bar :widgets="widgets" :customwidgets="customWidgets"></widget-side-bar>'+
+				'<widget-side-bar :containers="containers" :widgets="widgets" :customwidgets="customWidgets"></widget-side-bar>'+
 			'</div>'+
 			'<main class="col ps-md-2 pt-2">'+
 				'<div :class="[$store.state.preview ? \'p-3 bg-light border rounded preview\' : \'bg-light border rounded edition\']">'+
-					'<form-content :content="form.content"></form-content>'+
+					'<form-content :content="$store.state.form.content"></form-content>'+
 				'</div>'+
 			'</main>'+
 			'<div  v-if="!$store.state.preview" class="col-auto px-0">'+
@@ -15,14 +15,13 @@ let template = '<my-header apptitle="Ed!t0r"></my-header>'+
 		'</div>'+
 	'</div>';
 
-
-window.currentFieldDiv = null;
 window.dropZone = null;
 
 export function builder() {
 
     let rootElement;
-    let customWidgetUrl;
+    let customWidgetUrl = null;
+	let formBackendUrl = null;
 
     return {
         setRoot: function (htmlElement) {
@@ -33,6 +32,10 @@ export function builder() {
             this.customWidgetUrl = customWidgetUrl;
             return this;
         },
+        setFormBackendUrl: function (formBackendUrl) {
+            this.formBackendUrl = formBackendUrl;
+            return this;
+        },
        
 	    addHtmlTemplate: function() {
 			let theApp = document.createElement("div");
@@ -41,15 +44,19 @@ export function builder() {
 			this.rootElement.insertBefore(theApp, this.rootElement.firstChild);
 		},
 		
-		buildVueEditor: function(hasCustomWidgets){
+		buildVueEditor: function(formBackendUrl, hasCustomWidgets){
 			let vm = new Vue({
 				el: '#editorApp',
 				'store': new Vuex.Store({
 					state: {
 						globalId:0,
 						preview: false,
+						form: {'id':null,
+							'name': 'newForm',
+							'content':[]},
 						currentField:null,
-						fieldTypeMap:[]
+						fieldTypeMap:[],
+						formBackendUrl: formBackendUrl,
 					},
 					mutations: {
 						increment (state) {
@@ -59,11 +66,27 @@ export function builder() {
 				}),
 				data: function () {
 					return {
-						form: {'name': 'newForm',
-							'content':[]},
 						customWidgets: [],
-						widgets: [{ 
-							'type': 'row-element',
+						containers: [{
+							'type':'contentWidget',
+							'nature': 'panel-element',
+							'display': 'Panel',
+							'sizeable': false,
+							'props': {
+								'id':'panel',
+								'title': 'panel',
+								'content':[],
+								'icon' : 'rowwidget',
+								'class': ''
+							},
+							'propsDef':[{
+								'name':'title',
+								'type': 'text'
+							}]
+						}],
+						widgets: [/*{ 
+							'type':'contentWidget',
+							'nature': 'row-element',
 							'display': 'Row',
 							'sizeable': false,
 							'props': {
@@ -73,8 +96,9 @@ export function builder() {
 								'class': ''
 							},
 							'propsDef':[]
-						},{ 
-							'type': 'input-element',
+						},*/{ 
+							'type':'widget',
+							'nature': 'input-element',
 							'display': 'Input',
 							'sizeable': true,
 							'props': {
@@ -146,8 +170,42 @@ export function builder() {
 									'type': 'number'
 								}
 							]					
+						},{ 
+							'type':'widget',
+							'nature': 'checkbox-element',
+							'display': 'CheckBox',
+							'sizeable': true,
+							'props': {
+								'id':'checkbox',
+								'icon' : 'bi bi-check-square',
+								'class': '',
+								'label': 'label',
+								'required': true,
+								'disabled': false,
+								'hidden': false,
+								
+							},
+							'propsDef':[
+								{
+									'name':'required',
+									'type': 'boolean'
+								},
+								{
+									'name':'disabled',
+									'type': 'boolean'
+								},
+								{
+									'name':'class',
+									'type': 'text'
+								},
+								{
+									'name':'label',
+									'type': 'text'
+								}
+							]					
 						},{
-							'type': 'button-element',
+							'type':'widget',
+							'nature': 'button-element',
 							'display': 'Button',
 							'sizeable': true,
 							'props': {
@@ -186,13 +244,16 @@ export function builder() {
 				},
 				methods: {
 					loadWidgetMap: function() {
+						for(let i=0;i<this.containers.length;i++) {
+							this.$store.state.fieldTypeMap[this.containers[i].nature]=this.containers[i].propsDef;
+						}
 						for(let i=0;i<this.widgets.length;i++) {
-							this.$store.state.fieldTypeMap[this.widgets[i].type]=this.widgets[i].propsDef;
+							this.$store.state.fieldTypeMap[this.widgets[i].nature]=this.widgets[i].propsDef;
 						}
 					},
 					loadCustomWidgetMap: function() {
 						for(let i=0;i<this.customWidgets.length;i++) {
-							this.$store.state.fieldTypeMap[this.customWidgets[i].type]=this.customWidgets[i].propsDef;
+							this.$store.state.fieldTypeMap[this.customWidgets[i].nature]=this.customWidgets[i].propsDef;
 						}
 					}
 				},
@@ -218,12 +279,12 @@ export function builder() {
 				  script.innerHTML = response.data;  
 				  document.body.appendChild(script);
 				  
-				  this.buildVueEditor(true);
+				  this.buildVueEditor(this.formBackendUrl, true);
 				}).catch(error => {
-				  this.buildVueEditor(false);
+				  this.buildVueEditor(this.formBackendUrl, false);
 				})
 			} else {
-				this.buildVueEditor(false);
+				this.buildVueEditor(this.formBackendUrl, false);
 			}
 			
 			//$(this.rootElement).prepend(template);

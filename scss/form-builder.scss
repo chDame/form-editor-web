@@ -1,6 +1,11 @@
 #sidebar-nav {
 	width:160px;
 }
+#widgetAccordions {
+    position: fixed;
+    width: 160px;
+    height: 100vh;
+}
 #properties-nav {
 	width:230px;
 }
@@ -51,17 +56,27 @@
 }
 .edition .form-field {
 	position: relative;
-	border: 2px blue dotted;
-	padding: 10px;
-	box-shadow: 0 0 10px grey inset;
-	margin-bottom: 10px !important;
+	border: 1px blue dotted;
+	padding: 2px;
+	margin-bottom: 15px !important;
 	background: #EFEFEF;
+}
+.edition .form-field.row-element {
+    border-left: 6px solid #6699cc;
+    padding-left: 5px;
+    border-top: 0px;
+    border-right: 0px;
+    border-bottom: 0px;
+    box-shadow: none;
 }
 .edition span.form-field-type {
 	position: absolute;
 	top: -11px;
 	background: lightgrey;
 	font-size: 0.7em;
+}
+.edition .form-field.row-element > span.form-field-type {
+    display:none;
 }
 .preview span.form-field-type {
 	display:none;
@@ -72,7 +87,8 @@
 	
 }
 .dragArea.row {
-	padding: 15px 0px 15px 25px !important;
+	padding: 5px 0px 5px 25px !important;
+    min-height: 50px;
 }
 .dragArea.highlight {
 	background-color: rgba(255,204,128,0.6) !important;

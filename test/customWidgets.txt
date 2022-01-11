@@ -1,6 +1,7 @@
 window.customwidgets = [{ 
-		'type': 'panel-element',
-		'display': 'Panel',
+		'type':'contentWidget',
+		'nature': 'panel-element2',
+		'display': 'Panel2',
 		'sizeable': false,
 		'props': {
 			'id':'panel',
@@ -14,14 +15,15 @@ window.customwidgets = [{
 			'type': 'text'
 		}]
 	},{ 
-		'type': 'checkbox-element',
-		'display': 'CheckBox',
+		'type':'widget',
+		'nature': 'checkbox-element2',
+		'display': 'CheckBox2',
 		'sizeable': true,
 		'props': {
 			'id':'checkbox',
 			'icon' : 'bi bi-check-square',
 			'class': '',
-			'label': 'label :',
+			'label': 'label',
 			'required': true,
 			'disabled': false,
 			'hidden': false,
@@ -48,16 +50,16 @@ window.customwidgets = [{
 	}
 ]
 
-Vue.component('checkbox-element', {
+Vue.component('checkbox-element2', {
   template: '<div class="form-check mb-1"><input class="form-check-input" type="checkbox"><label class="form-check-label">{{props.label}}</label></div>',
   props: ['props']
 })
 
-Vue.component('panel-element', {
+Vue.component('panel-element2', {
   template: '<div class="card {{props.class}}">'+
   '<div class="card-header">{{props.title}}</div>'+
   '<div class="card-body">'+
-    '<form-content :content="props.content" classname="row"></form-content>'+
+    '<form-content :content="props.content" classname="row" rowcontainer="true"></form-content>'+
   '</div>'+
 '</div>',
   props: ['props']
