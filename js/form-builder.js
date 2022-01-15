@@ -1,5 +1,5 @@
 let template = '<my-header apptitle="Ed!t0r"></my-header>'+
-	'<div class="container-fluid">'+
+	'<div class="container-fluid bg-secondary">'+
 		'<div class="row flex-nowrap">'+
 			'<div class="col-auto px-0" v-if="!$store.state.preview" >'+
 				'<widget-side-bar :containers="containers" :widgets="widgets" :customwidgets="customWidgets"></widget-side-bar>'+
@@ -21,7 +21,7 @@ export function builder() {
 
     let rootElement;
     let customWidgetUrl = null;
-	let formBackendUrl = null;
+	let saveMethod = null;
 
     return {
         setRoot: function (htmlElement) {
@@ -32,8 +32,8 @@ export function builder() {
             this.customWidgetUrl = customWidgetUrl;
             return this;
         },
-        setFormBackendUrl: function (formBackendUrl) {
-            this.formBackendUrl = formBackendUrl;
+        setSaveMethod: function (saveMethod) {
+            this.saveMethod = saveMethod;
             return this;
         },
        
@@ -44,7 +44,7 @@ export function builder() {
 			this.rootElement.insertBefore(theApp, this.rootElement.firstChild);
 		},
 		
-		buildVueEditor: function(formBackendUrl, hasCustomWidgets){
+		buildVueEditor: function(saveMethod, hasCustomWidgets){
 			let vm = new Vue({
 				el: '#editorApp',
 				'store': new Vuex.Store({
@@ -56,7 +56,7 @@ export function builder() {
 							'content':[]},
 						currentField:null,
 						fieldTypeMap:[],
-						formBackendUrl: formBackendUrl,
+						saveMethod: saveMethod,
 					},
 					mutations: {
 						increment (state) {
@@ -279,12 +279,12 @@ export function builder() {
 				  script.innerHTML = response.data;  
 				  document.body.appendChild(script);
 				  
-				  this.buildVueEditor(this.formBackendUrl, true);
+				  this.buildVueEditor(this.saveMethod, true);
 				}).catch(error => {
-				  this.buildVueEditor(this.formBackendUrl, false);
+				  this.buildVueEditor(this.saveMethod, false);
 				})
 			} else {
-				this.buildVueEditor(this.formBackendUrl, false);
+				this.buildVueEditor(this.saveMethod, false);
 			}
 			
 			//$(this.rootElement).prepend(template);

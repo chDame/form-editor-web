@@ -1,6 +1,22 @@
 Vue.component('my-header',{ template: '<nav class="navbar navbar-light bg-dark text-light">'+
 		'<div class="container-fluid">'+
-			'<a class="navbar-brand text-light" href="#">{{apptitle}}</a>'+
+			'<div v-if="$store.state.saveMethod!=null" class="dropdown">'+
+			 ' <button class="btn btn-outline-light dropdown-toggle" type="button" id="menuEditor" data-bs-toggle="dropdown" aria-expanded="false">'+
+				'{{apptitle}}'+
+			  '</button>'+
+			  '<div class="dropdown-menu" aria-labelledby="menuEditor">'+
+				'<div class="dropdown-item">'+
+					'<div class="input-group" v-if="$store.state.saveMethod!=null">'+
+						'<span class="input-group-text"><i class="bi bi-file-earmark-code"></i></span>'+
+						'<input type="text" class="form-control" placeholder="Form name" aria-label="Formname" v-model="$store.state.form.name">'+
+						'<button class="btn btn-sm btn-primary" v-on:click="saveForm()">Save</button>'+
+					'</div>'+
+				'</div>'+
+				'<a class="dropdown-item" href="#">Another action</a>'+
+				'<a class="dropdown-item" href="#">Something else here</a>'+
+			  '</div>'+
+			'</div>'+
+			'<a v-else class="navbar-brand text-light" href="#">{{apptitle}}</a>'+
 			'<div class="btn-group" role="group" aria-label="Basic outlined example">'+
 			  '<template v-if="!$store.state.preview">'+
 				'<a data-bs-target="#sidebar" data-bs-toggle="collapse" type="button" class="btn btn-outline-light"><i class="bi bi-boxes"></i></a>'+
@@ -8,11 +24,7 @@ Vue.component('my-header',{ template: '<nav class="navbar navbar-light bg-dark t
 				'<a data-bs-target="#sidebar-properties" data-bs-toggle="collapse" type="button" class="btn btn-outline-light"><i class="bi bi-braces"></i></a>'+
 			  '</template>'+
 			'</div>'+
-			'<div class="input-group mb-3" v-if="$store.state.formBackendUrl">'+
-				'<div class="input-group-prepend"><span class="input-group-text" id="basic-addon1"><i class="bi bi-file-earmark-code"></i></span></div>'+
-				'<input type="text" class="form-control" placeholder="Form name" aria-label="Formname" v-model="$store.state.form.name">'+
-				'<div class="input-group-append"><button class="btn btn-outline-primary" v-on:click="saveForm()"><i class="bi bi-save"></i></button></div>'+
-			'</div>'+
+			
 			'<div class="form-check">'+
 			  '<input class="form-check-input" type="checkbox" v-model="$store.state.preview" id="checkPreview">'+
 			  '<label class="form-check-label" for="checkPreview">Preview</label>'+
@@ -22,19 +34,15 @@ Vue.component('my-header',{ template: '<nav class="navbar navbar-light bg-dark t
   props: ['apptitle'],
   methods: {
 	  saveForm() {
-		axios.post(this.$store.state.formBackendUrl, this.$store.state.form).then(response => {
-				  alert(response.data); 
-				}).catch(error => {
-				  alert(response.data); 
-				})
+		  this.$store.state.saveMethod(JSON.parse(JSON.stringify(this.$store.state.form)));
 	  }
   }
  });
 Vue.component('widget-side-bar',{
   template: '<div id="sidebar" class="collapse collapse-horizontal show border-end">'+
-				'<div id="sidebar-nav" class="list-group bg-secondary border-0 rounded-0 text-sm-start min-vh-100">'+
+				'<div id="sidebar-nav" class="list-group bg-secondary border-0 rounded-0 text-sm-start">'+
 				
-					'<div class="accordion bg-secondary" id="widgetAccordions" >'+
+					'<div class="accordion" id="widgetAccordions" >'+
 						'<div class="accordion-item">'+
 							'<h2 class="accordion-header">'+
 								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#containers-widgets" aria-expanded="true" aria-controls="containers-widgets">Containers</button>'+
@@ -51,7 +59,7 @@ Vue.component('widget-side-bar',{
 							'<h2 class="accordion-header">'+
 								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#standard-widgets" aria-expanded="true" aria-controls="standard-widgets">Widgets</button>'+
 							'</h2>'+
-							'<div id="standard-widgets" class="accordion-collapse collapse show" data-bs-parent="#widgetAccordions">'+
+							'<div id="standard-widgets" class="accordion-collapse collapse" data-bs-parent="#widgetAccordions">'+
 								'<div class="bg-secondary">'+
 									'<draggable :list="widgets" :group="{ name: \'form\', pull: \'clone\', put: false}" :clone="cloneWidget" :move="moveWidget" @end="endDrag">'+
 										'<div v-for="(widget, i) in widgets" :key="i" class="widgetbtn">'+
@@ -61,7 +69,7 @@ Vue.component('widget-side-bar',{
 								'</div></div></div>'+
 						'<div class="accordion-item" v-if="customwidgets.length>0">'+
 							'<h2 class="accordion-header">'+
-								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#custom-widgets" aria-expanded="true" aria-controls="custom-widgets">Custom Widgets</button>'+
+								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#custom-widgets" aria-expanded="true" aria-controls="custom-widgets">Custom</button>'+
 							'</h2>'+
 							'<div id="custom-widgets" class="accordion-collapse collapse" data-bs-parent="#widgetAccordions">'+
 								'<div class="bg-secondary">'+
@@ -110,7 +118,7 @@ Vue.component('widget-side-bar',{
 });
 Vue.component('properties-side-bar',{
   template: '<div id="sidebar-properties" class="collapse collapse-horizontal show border-start">'+
-				'<div id="properties-nav" class="card text-white bg-secondary border-0 rounded-0 text-sm-start min-vh-100">'+
+				'<div id="properties-nav" class="card text-white bg-secondary border-0 rounded-0 text-sm-start">'+
 					'<div class="accordion" v-if="$store.state.currentField!=null">'+
 						'<div class="accordion-item">'+
 							'<h2 class="accordion-header">'+

@@ -62,7 +62,7 @@ Vue.component('form-content',{
 				this.$store.state.form.content.splice(i, 1);
 			} else this.correctRow(this.$store.state.form.content[i]);
 		}
-		if (this.$store.state.currentField.nature=='row-element') {
+		if (this.$store.state.currentField && this.$store.state.currentField.nature=='row-element') {
 			this.$store.state.currentField = null;
 		}
 	}

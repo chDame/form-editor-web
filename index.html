@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="test/axios-0.24.0.min.js"></script>
     <script src="dist/FormEditor-full.bundle.min.js"></script>
     
 	
@@ -11,7 +12,28 @@
 <body>
 
 <script>
-formEditor.builder().setRoot(document.body).setFormBackendUrl('http://localhost:8080/forms').setCustomWidgetUrl('./test/customWidgets.txt').build();
+function moveContent(row) {
+	row.content = row.props.content;
+	delete row.props.content;
+	for(let i=0;i<row.content.length;i++) {
+		let widget = row.content[i];
+		if (widget.type=='contentWidget') {
+			moveContent(widget);
+		}
+	}
+}
+let saveMethod = function(form) {
+	for(let i=0; i<form.content.length; i++) {
+		let row = form.content[i];
+		moveContent(row);
+	}
+	axios.post('http://localhost:8080/forms', form).then(response => {
+				  alert(response.data); 
+				}).catch(error => {
+				  alert(response.data); 
+				})
+}
+formEditor.builder().setRoot(document.body).setSaveMethod(saveMethod).setCustomWidgetUrl('./test/customWidgets.txt').build();
 </script>
 
 </body>

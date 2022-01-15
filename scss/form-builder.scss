@@ -1,13 +1,21 @@
+nav {
+	height:55px;
+}
+.navbar .dropdown-item {
+    width: 280px;
+}
 #sidebar-nav {
-	width:160px;
+	//width:160px;
 }
 #widgetAccordions {
-    position: fixed;
+    //position: fixed;
     width: 160px;
-    height: 100vh;
+    height: calc(100vh - 55px);
 }
 #properties-nav {
-	width:230px;
+	width:250px;
+    height: calc(100vh - 55px);
+	overflow:auto;
 }
 #properties-nav label.form-label {
 	font-size: 0.8em;
@@ -28,6 +36,12 @@
 #sidebar-nav .accordion-button,
 #properties-nav .accordion-button {
 	box-shadow: 0px 2px 5px #444;
+}
+main {
+	background: #fff;
+    height: calc(100vh - 55px);
+    overflow: auto;
+    padding-bottom: 30px;
 }
 .form-label.required:after {
   content:"*";
