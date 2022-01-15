@@ -21,7 +21,7 @@ export function builder() {
 
     let rootElement;
     let customWidgetUrl = null;
-	let saveMethod = null;
+	let menu = null;
 
     return {
         setRoot: function (htmlElement) {
@@ -32,8 +32,8 @@ export function builder() {
             this.customWidgetUrl = customWidgetUrl;
             return this;
         },
-        setSaveMethod: function (saveMethod) {
-            this.saveMethod = saveMethod;
+        setMenu: function (menu) {
+            this.menu = menu;
             return this;
         },
        
@@ -44,7 +44,7 @@ export function builder() {
 			this.rootElement.insertBefore(theApp, this.rootElement.firstChild);
 		},
 		
-		buildVueEditor: function(saveMethod, hasCustomWidgets){
+		buildVueEditor: function(menu){
 			let vm = new Vue({
 				el: '#editorApp',
 				'store': new Vuex.Store({
@@ -56,7 +56,7 @@ export function builder() {
 							'content':[]},
 						currentField:null,
 						fieldTypeMap:[],
-						saveMethod: saveMethod,
+						menu: menu,
 					},
 					mutations: {
 						increment (state) {
@@ -265,7 +265,7 @@ export function builder() {
 				}
 			});
 			
-			if (hasCustomWidgets) {
+			if (window.customwidgets) {
 				vm.customWidgets = window.customwidgets;
 				vm.loadCustomWidgetMap();
 			}
@@ -279,16 +279,13 @@ export function builder() {
 				  script.innerHTML = response.data;  
 				  document.body.appendChild(script);
 				  
-				  this.buildVueEditor(this.saveMethod, true);
+				  this.buildVueEditor(this.menu);
 				}).catch(error => {
-				  this.buildVueEditor(this.saveMethod, false);
+				  this.buildVueEditor(this.menu);
 				})
 			} else {
-				this.buildVueEditor(this.saveMethod, false);
+				this.buildVueEditor(this.menu);
 			}
-			
-			//$(this.rootElement).prepend(template);
-            
 		}
 	}
 }

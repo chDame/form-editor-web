@@ -12,28 +12,52 @@
 <body>
 
 <script>
-function moveContent(row) {
-	row.content = row.props.content;
-	delete row.props.content;
-	for(let i=0;i<row.content.length;i++) {
-		let widget = row.content[i];
-		if (widget.type=='contentWidget') {
-			moveContent(widget);
-		}
-	}
-}
+
 let saveMethod = function(form) {
-	for(let i=0; i<form.content.length; i++) {
-		let row = form.content[i];
-		moveContent(row);
-	}
-	axios.post('http://localhost:8080/forms', form).then(response => {
-				  alert(response.data); 
-				}).catch(error => {
-				  alert(response.data); 
-				})
+	
 }
-formEditor.builder().setRoot(document.body).setSaveMethod(saveMethod).setCustomWidgetUrl('./test/customWidgets.txt').build();
+
+Vue.component('my-menu',{ template: '<div class="dropdown">'+
+			 ' <button class="btn btn-outline-light dropdown-toggle" type="button" id="menuEditor" data-bs-toggle="dropdown" aria-expanded="false">Ed!t0r</button>'+
+			  '<div class="dropdown-menu" aria-labelledby="menuEditor">'+
+				'<div class="dropdown-item">'+
+					'<div class="input-group">'+
+						'<span class="input-group-text"><i class="bi bi-file-earmark-code"></i></span>'+
+						'<input type="text" class="form-control" placeholder="Form name" aria-label="Formname" v-model="$store.state.form.name">'+
+						'<button class="btn btn-sm btn-primary" v-on:click="saveForm()">Save</button>'+
+					'</div>'+
+				'</div>'+
+				'<a class="dropdown-item" href="#">Another action</a>'+
+				'<a class="dropdown-item" href="#">Something else here</a>'+
+			  '</div>'+
+			'</div>',
+  methods: {
+	moveContent(row) {
+		row.content = row.props.content;
+		delete row.props.content;
+		for(let i=0;i<row.content.length;i++) {
+			let widget = row.content[i];
+			if (widget.type=='contentWidget') {
+				moveContent(widget);
+			}
+		}
+	},
+	saveForm() {
+		let clone = JSON.parse(JSON.stringify(this.$store.state.form));
+		for(let i=0; i<clone.content.length; i++) {
+			let row = clone.content[i];
+			this.moveContent(row);
+		}
+		axios.post('http://localhost:8080/forms', clone).then(response => {
+			alert(response.data); 
+		}).catch(error => {
+			alert(response.data); 
+		})
+	}
+  }
+ });
+			
+formEditor.builder().setRoot(document.body).setMenu('my-menu').setCustomWidgetUrl('./test/customWidgets.txt').build();
 </script>
 
 </body>

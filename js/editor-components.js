@@ -1,21 +1,6 @@
 Vue.component('my-header',{ template: '<nav class="navbar navbar-light bg-dark text-light">'+
 		'<div class="container-fluid">'+
-			'<div v-if="$store.state.saveMethod!=null" class="dropdown">'+
-			 ' <button class="btn btn-outline-light dropdown-toggle" type="button" id="menuEditor" data-bs-toggle="dropdown" aria-expanded="false">'+
-				'{{apptitle}}'+
-			  '</button>'+
-			  '<div class="dropdown-menu" aria-labelledby="menuEditor">'+
-				'<div class="dropdown-item">'+
-					'<div class="input-group" v-if="$store.state.saveMethod!=null">'+
-						'<span class="input-group-text"><i class="bi bi-file-earmark-code"></i></span>'+
-						'<input type="text" class="form-control" placeholder="Form name" aria-label="Formname" v-model="$store.state.form.name">'+
-						'<button class="btn btn-sm btn-primary" v-on:click="saveForm()">Save</button>'+
-					'</div>'+
-				'</div>'+
-				'<a class="dropdown-item" href="#">Another action</a>'+
-				'<a class="dropdown-item" href="#">Something else here</a>'+
-			  '</div>'+
-			'</div>'+
+			'<component v-if="$store.state.menu" :is="$store.state.menu"></component>'+
 			'<a v-else class="navbar-brand text-light" href="#">{{apptitle}}</a>'+
 			'<div class="btn-group" role="group" aria-label="Basic outlined example">'+
 			  '<template v-if="!$store.state.preview">'+
@@ -31,12 +16,7 @@ Vue.component('my-header',{ template: '<nav class="navbar navbar-light bg-dark t
 			'</div>'+
 		'</div>'+
 	'</nav>',
-  props: ['apptitle'],
-  methods: {
-	  saveForm() {
-		  this.$store.state.saveMethod(JSON.parse(JSON.stringify(this.$store.state.form)));
-	  }
-  }
+  props: ['apptitle']
  });
 Vue.component('widget-side-bar',{
   template: '<div id="sidebar" class="collapse collapse-horizontal show border-end">'+
