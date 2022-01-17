@@ -107,9 +107,11 @@ main {
 .dragArea.highlight {
 	background-color: rgba(255,204,128,0.6) !important;
 }
-.edition .form-field.currentField {
+.edition .form-field.currentField,
+.edition .currentField > span.form-field-type {
 	background-color: rgba(204,204,255,0.7) !important;
 }
+
 .ghost {
 	zoom:0.5;
 	padding:10px;

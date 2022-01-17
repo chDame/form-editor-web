@@ -1,11 +1,16 @@
 Vue.component('form-content',{
   template: '<div :class="classname"><draggable v-if="!$store.state.preview" :list="content" class="dragArea row" group="form" ghost-class="ghost" :move="moveWidget" @end="endDrag" @change="verifyRow">'+
-					'<form-field v-for="(field, i) in content" :key="i" :field="field"></form-field>'+
+					'<form-field v-for="(field, i) in content" :field="field" :index="i" @send-deletion="deletion"></form-field>'+
 				'</draggable>'+
-				'<form-field v-if="$store.state.preview" v-for="(field, i) in content" :key="i" :field="field"></form-field>'+
+				'<form-field v-if="$store.state.preview" v-for="(field, i) in content" :index="i" :field="field"></form-field>'+
 			'</div>',
   props: ['content', 'classname'],
   methods: {
+	deletion(value) {
+		console.log(value);
+		this.content.splice(value, 1);
+		this.verifyRow();
+	},
 	moveWidget(evt) {
 		//if (dropZone!=null) {
 			//window.dropZone.classList.remove("highlight");
@@ -54,7 +59,7 @@ Vue.component('form-content',{
 		elt.props = {'id':'row', 'content':[], 'icon' : 'rowwidget','class': ''};
 		elt.props.content.push(clone);
 	},
-	verifyRow(evt) {
+	verifyRow() {
 		for (var i=this.$store.state.form.content.length-1;i>=0;i--) {
 			if(this.$store.state.form.content[i].nature!='row-element') {
 				this.changeToRow(this.$store.state.form.content[i]);
@@ -70,18 +75,22 @@ Vue.component('form-content',{
 });
 Vue.component('form-field',{
   template: '<div v-on:click="select($event)" :class="className">'+
-			'	  <span class="form-field-type">{{ field.display }}</span>'+
+			'	  <span class="form-field-type"><i class="bi bi-trash" v-on:click="deletion()"></i> {{ field.display }}</span>'+
 			'		<component :is="field.nature"'+
 			'		   :props="field.props">'+
 			'		</component>  '+
 			'</div>',
-  props: ['field'],
+  props: ['field', 'index'],
   methods: {
 	  select(event) {
 		if (this.field.nature!='row-element') {
 			this.$store.state.currentField = this.field;
 		}
 		event.stopPropagation();
+	  },
+	  deletion() {
+		  console.log(this.index);
+		  this.$emit('send-deletion', this.index);
 	  }
   },
   computed: {
