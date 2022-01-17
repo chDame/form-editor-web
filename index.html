@@ -5,12 +5,10 @@
     <title>Title</title>
     <script src="test/axios-0.24.0.min.js"></script>
     <script src="dist/FormEditor-full.bundle.min.js"></script>
-    
 	
 	<!--link href="dist/FormEditor-full.css" rel="stylesheet"-->
 </head>
 <body>
-
 <script>
 
 let saveMethod = function(form) {
@@ -18,7 +16,7 @@ let saveMethod = function(form) {
 }
 
 Vue.component('my-menu',{ template: '<div class="dropdown">'+
-			 ' <button class="btn btn-outline-light dropdown-toggle" type="button" id="menuEditor" data-bs-toggle="dropdown" aria-expanded="false">Ed!t0r</button>'+
+			 ' <button class="btn btn-outline-light dropdown-toggle" type="button" id="menuEditor" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Ed!t0r</button>'+
 			  '<div class="dropdown-menu" aria-labelledby="menuEditor">'+
 				'<div class="dropdown-item">'+
 					'<div class="input-group">'+
@@ -27,35 +25,88 @@ Vue.component('my-menu',{ template: '<div class="dropdown">'+
 						'<button class="btn btn-sm btn-primary" v-on:click="saveForm()">Save</button>'+
 					'</div>'+
 				'</div>'+
-				'<a class="dropdown-item" href="#">Another action</a>'+
-				'<a class="dropdown-item" href="#">Something else here</a>'+
+				'<div class="btn-group dropend">'+
+				  '<button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">'+
+					'Load '+
+				  '</button>'+
+				  '<ul class="dropdown-menu">'+
+					'<li v-for="name in names"><a class="dropdown-item" v-on:click="loadForm(name)">{{name}}</a></li>'+
+				  '</ul>'+
+				'</div>'+
 			  '</div>'+
 			'</div>',
+  data: function () {
+    return {
+      names: []
+    }
+  },
   methods: {
-	moveContent(row) {
+	moveContentForSave(row) {
 		row.content = row.props.content;
 		delete row.props.content;
 		for(let i=0;i<row.content.length;i++) {
 			let widget = row.content[i];
 			if (widget.type=='contentWidget') {
-				moveContent(widget);
+				this.moveContentForSave(widget);
 			}
+		}
+	},
+	moveContentForLoad(row) {
+		row.props.content = row.content;
+		delete row.content;
+		for(let i=0;i<row.props.content.length;i++) {
+			let widget = row.props.content[i];
+			if (widget.type=='contentWidget') {
+				this.moveContentForLoad(widget);
+			}
+		}
+	},
+	prepareForSave(form) {
+		for(let i=0; i<form.content.length; i++) {
+			let row = form.content[i];
+			this.moveContentForSave(row);
+		}
+	},
+	prepareForLoad(form) {
+		for(let i=0; i<form.content.length; i++) {
+			let row = form.content[i];
+			this.moveContentForLoad(row);
 		}
 	},
 	saveForm() {
 		let clone = JSON.parse(JSON.stringify(this.$store.state.form));
-		for(let i=0; i<clone.content.length; i++) {
-			let row = clone.content[i];
-			this.moveContent(row);
-		}
+		this.prepareForSave(clone);
+
 		axios.post('http://localhost:8080/forms', clone).then(response => {
-			alert(response.data); 
+			
+			this.$store.state.form.id = response.data.id; 
 		}).catch(error => {
-			alert(response.data); 
+			alert(error.message); 
+		})
+	},
+	loadForm(name) {
+		axios.get('http://localhost:8080/forms/?name='+name).then(response => {
+			let form = response.data[0]; 
+			this.prepareForLoad(form);
+			this.$store.state.form.id = form.id;
+			this.$store.state.form.name = form.name;
+			this.$store.state.form.content = form.content;
+			console.log(this.$store.state.form);
+		}).catch(error => {
+		console.log(error);
+			alert('pouet'); 
+			alert(error.message); 
 		})
 	}
+  },
+  created: function () {
+    axios.get('http://localhost:8080/forms/names').then(response => {
+		this.names = response.data; 
+	}).catch(error => {
+		alert(error.message); 
+	})
   }
- });
+});
 			
 formEditor.builder().setRoot(document.body).setMenu('my-menu').setCustomWidgetUrl('./test/customWidgets.txt').build();
 </script>
