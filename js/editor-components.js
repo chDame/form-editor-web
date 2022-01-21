@@ -96,6 +96,7 @@ Vue.component('widget-side-bar',{
 	}
   }
 });
+
 Vue.component('properties-side-bar',{
   template: '<div id="sidebar-properties" class="collapse collapse-horizontal show border-start">'+
 				'<div id="properties-nav" class="card text-white bg-secondary border-0 rounded-0 text-sm-start">'+
@@ -108,59 +109,43 @@ Vue.component('properties-side-bar',{
 							'</h2>'+
 							'<div id="properties-general" class="accordion-collapse collapse show">'+
 								'<div class="accordion-body bg-secondary">'+
-									'<label class="form-label required">Component id</label>'+
-										'<div class="input-group mb-1">'+
-											'<span class="input-group-text">abc</span>'+
-											'<input type="text" class="form-control" required v-model="$store.state.currentField.props.id">'+
-										'</div>'+
-									'</div>'+
+									'<prop-text :propdef="{\'name\':\'id\',\'required\':true}"></prop-text>'+
 								'</div>'+
 							'</div>'+
-							'<div class="accordion-item" v-if="$store.state.currentField.sizeable">'+
-								'<h2 class="accordion-header">'+
-									'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#properties-display" aria-expanded="true" aria-controls="properties-display">'+
-										'Display'+
-									'</button>'+
-								'</h2>'+
-								'<div id="properties-display" class="accordion-collapse collapse show">'+
-									'<div class="accordion-body bg-secondary">'+
-										'<div class="form-check mb-1"><input class="form-check-input" type="checkbox" v-model="$store.state.currentField.props.hidden"><label class="form-check-label">Hidden</label></div>'+
-										'<div class="input-group mb-1 half">'+
-											'<span class="input-group-text bi bi-phone"></span>'+
-											'<input type="number" class="form-control" required v-model="$store.state.currentField.props.xs" min=1 max=12>'+
-										'</div>'+
-										'<div class="input-group mb-1 half">'+
-											'<span class="input-group-text bi bi-tablet-landscape"></span>'+
-											'<input type="number" class="form-control" required v-model="$store.state.currentField.props.sm" min=1 max=12>'+
-										'</div> '+
-										'<div class="input-group mb-1 half">'+
-											'<span class="input-group-text bi bi-laptop"></span>'+
-											'<input type="number" class="form-control" required v-model="$store.state.currentField.props.md" min=1 max=12>'+
-										'</div>'+
-										'<div class="input-group mb-1 half">'+
-											'<span class="input-group-text bi bi-display"></span>'+
-											'<input type="number" class="form-control" required v-model="$store.state.currentField.props.lg" min=1 max=12>'+
-										'</div> '+
-									'</div>'+
+						'</div>'+
+						'<div class="accordion-item" v-if="$store.state.currentField.sizeable">'+
+							'<h2 class="accordion-header">'+
+								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#properties-display" aria-expanded="true" aria-controls="properties-display">'+
+									'Display'+
+								'</button>'+
+							'</h2>'+
+							'<div id="properties-display" class="accordion-collapse collapse show">'+
+								'<div class="accordion-body bg-secondary">'+
+									'<prop-boolean :propdef="{\'name\':\'hidden\'}"></prop-boolean>'+
+									'<display-comp icon="phone" property="xs"></display-comp>'+
+									'<display-comp icon="tablet-landscape" property="sm"></display-comp>'+
+									'<display-comp icon="laptop" property="md"></display-comp>'+
+									'<display-comp icon="display" property="lg"></display-comp>'+
 								'</div>'+
 							'</div>'+
-							'<div class="accordion-item">'+
-								'<h2 class="accordion-header">'+
-									'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#properties-other" aria-expanded="true" aria-controls="properties-other">'+
-										'Other'+
-									'</button>'+
-								'</h2>'+
-								'<div id="properties-other" class="accordion-collapse collapse show">'+
-									'<div class="accordion-body bg-secondary">'+
-										'<div v-for="prop in $store.state.fieldTypeMap[$store.state.currentField.nature]">'+
-											'<component :is="\'prop-\'+prop.type" :propdef="prop"></component>'+
-										'</div>'+
+						'</div>'+
+						'<div class="accordion-item">'+
+							'<h2 class="accordion-header">'+
+								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#properties-other" aria-expanded="true" aria-controls="properties-other">'+
+									'Other'+
+								'</button>'+
+							'</h2>'+
+							'<div id="properties-other" class="accordion-collapse collapse show">'+
+								'<div class="accordion-body bg-secondary">'+
+									'<div v-for="prop in $store.state.fieldTypeMap[$store.state.currentField.nature]">'+
+										'<prop-component :propdef="prop"></prop-component>'+
 									'</div>'+
 								'</div>'+
 							'</div>'+
 						'</div>'+
 					'</div>'+
-				'</div>'
+				'</div>'+
+			'</div>'
 });
   
   
