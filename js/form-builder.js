@@ -82,19 +82,7 @@ export function builder() {
 								'type': 'text'
 							}]
 						}],
-						widgets: [/*{ 
-							'type':'contentWidget',
-							'nature': 'row-element',
-							'display': 'Row',
-							'sizeable': false,
-							'props': {
-								'id':'row',
-								'content':[],
-								'icon' : 'rowwidget',
-								'class': ''
-							},
-							'propsDef':[]
-						},*/{ 
+						widgets: [{ 
 							'type':'widget',
 							'nature': 'input-element',
 							'display': 'Input',
@@ -153,19 +141,23 @@ export function builder() {
 								},
 								{
 									'name':'min',
-									'type': 'number'
+									'type': 'number',
+									'condition':'field.props.type=="number"'
 								},
 								{
 									'name':'max',
-									'type': 'number'
+									'type': 'number',
+									'condition':'field.props.type=="number"'
 								},
 								{
 									'name':'minlength',
-									'type': 'number'
+									'type': 'number',
+									'condition':'field.props.type!="number"'
 								},
 								{
 									'name':'maxlength',
-									'type': 'number'
+									'type': 'number',
+									'condition':'field.props.type!="number"'
 								}
 							]					
 						},{ 

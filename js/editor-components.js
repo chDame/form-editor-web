@@ -152,7 +152,7 @@ Vue.component('properties-side-bar',{
 								'</h2>'+
 								'<div id="properties-other" class="accordion-collapse collapse show">'+
 									'<div class="accordion-body bg-secondary">'+
-										'<div v-for="(prop, i) in $store.state.fieldTypeMap[$store.state.currentField.nature]" :key="i">'+
+										'<div v-for="prop in $store.state.fieldTypeMap[$store.state.currentField.nature]">'+
 											'<component :is="\'prop-\'+prop.type" :propdef="prop"></component>'+
 										'</div>'+
 									'</div>'+
