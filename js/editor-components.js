@@ -6,7 +6,7 @@ Vue.component('my-header',{ template: '<nav class="navbar navbar-light bg-dark t
 			  '<template v-if="!$store.state.preview">'+
 				'<a data-bs-target="#sidebar" data-bs-toggle="collapse" type="button" class="btn btn-outline-light"><i class="bi bi-boxes"></i></a>'+
 				'<a data-bs-target="#sidebar-properties" data-bs-toggle="collapse" type="button" class="btn btn-outline-light"><i class="bi bi-card-list"></i></a>'+
-				'<a data-bs-target="#sidebar-properties" data-bs-toggle="collapse" type="button" class="btn btn-outline-light"><i class="bi bi-braces"></i></a>'+
+				'<a data-bs-target="#data-panel" data-bs-toggle="collapse" type="button" class="btn btn-outline-light"><i class="bi bi-braces"></i></a>'+
 			  '</template>'+
 			'</div>'+
 			
@@ -161,4 +161,153 @@ Vue.component('properties-side-bar',{
 						'</div>'+
 					'</div>'+
 				'</div>'
+});
+  
+  
+Vue.component('data-panel',{
+  template: '<div id="data-panel" class="card collapse collapse-vertical show">'+
+	'<div class="card-header bg-secondary text-light d-flex justify-content-between" @drag="press" @dragend="release"><span>Data Panel</span>'+
+		'<button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#dataModal"><i class="bi bi-plus-lg"></i></button>'+
+	'</div>'+
+	'<div class="card-body" :style="style"><table class="table table-dark table-striped table-hover">'+
+		'<thead><tr><th scope="col">#</th><th scope="col">Name</th><th scope="col">Type</th><th scope="col">value</th><th scope="col"></th></tr></thead>'+
+		'<tbody>'+
+			'<tr><th>1</th><td>{{$store.state.form.data[0].name}}</td></tr>'+
+			'<tr v-for="(data, i) in $store.state.form.data">'+
+				'<th scope="row">{{i}}</th>'+
+				'<td>{{data.name}}</td>'+
+				'<td>{{data.type}}</td>'+
+				'<td>{{data.value}}</td>'+
+				'<td>blop</td>'+
+			'</tr>'+
+		'</tbody>'+
+	'</table></div>'+
+  '</div>',
+  data:function () {
+    return {
+      height: 100,
+	  clientY:null
+	}
+  },
+  methods: {
+	  press: function(evt){
+		  if (this.clientY!=null) {
+			  this.height=this.height-evt.clientY+this.clientY;
+		  }
+		  this.clientY=evt.clientY;
+		  console.log(evt);
+	  },
+	  release: function(evt){
+		  this.height=this.height-evt.clientY+this.clientY;
+		  this.clientY=null;
+	  }
+  },
+  computed: {
+	  style: function() {
+		  return 'height:'+this.height+'px; overflow:auto';
+	  }
+  }
+});
+
+Vue.component('data-modal',{
+  template: '<div class="modal fade" id="dataModal" ref="dataModal" tabindex="-1">'+
+  '<div class="modal-dialog">'+
+    '<div class="modal-content">'+
+      '<div class="modal-header bg-secondary text-light">'+
+        '<h5 class="modal-title" id="exampleModalLabel">Create a new data</h5>'+
+        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'+
+      '</div>'+
+      '<div class="modal-body">'+
+        '<div class="input-group mb-3">'+
+			'<span class="input-group-text">Name</span>'+
+			'<input type="text" class="form-control" placeholder="Name" v-model="data.name">'+
+        '</div>'+
+		'<div class="input-group mb-3">'+
+		  '<label class="input-group-text" for="dataType">Type</label>'+
+		  '<select class="form-select" id="dataType" v-model="data.type" @chqnge="changeType">'+
+			'<option>Choose...</option>'+
+			'<option>String</option>'+
+			'<option>JSON</option>'+
+			'<option>URL</option>'+
+			'<option>Javascript</option>'+
+			'<option>URL parameter</option>'+
+		  '</select>'+
+		'</div>'+
+        '<div class="input-group mb-3" v-if="data.type==\'String\' || data.type==\'URL\' || data.type==\'URL parameter\'">'+
+			'<span class="input-group-text" v-if="data.type==\'String\'">Value</span>'+
+			'<span class="input-group-text" v-if="data.type==\'URL\'">URL</span>'+
+			'<span class="input-group-text" v-if="data.type==\'URL parameter\'">Parameter name</span>'+
+			'<input type="text" class="form-control" placeholder="Value" v-model="data.value">'+
+        '</div>'+
+		'<json-editor v-if="data.type==\'JSON\'" :data="data"></json-editor>'+
+		'<javascript-editor v-if="data.type==\'Javascript\'" :data="data"></javascript-editor>'+
+      '</div>'+
+      '<div class="modal-footer">'+
+        '<button type="button" class="btn btn-primary" @click="addData" data-bs-dismiss="modal">Save</button>'+
+        '<button class="btn btn-link" data-bs-dismiss="modal">Cancel</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>'+
+'</div>',
+  data:function () {
+    return {
+		data: {
+		  name: "",
+		  type:"String",
+		  value:"",
+		}
+	}
+  },
+  methods: {
+	  clear: function() {
+		  this.data.name="";
+		  this.data.type="String";
+		  this.data.value="";
+	  },
+	  addData: function() {
+		  this.$store.state.form.data.push(this.data);
+	  },
+	  changeType: function() {
+		  this.data.value="";
+	  }
+  },
+  mounted(){
+	document.getElementById("dataModal").addEventListener('show.bs.modal', this.clear);
+  }
+});
+
+Vue.component('json-editor',{
+  template: '<div><textarea id="jsonEditor">{{data.value}}</textarea></div>',
+  props:['data'],
+  mounted(){
+	this.codemirror = CodeMirror.fromTextArea(document.getElementById('jsonEditor'), {
+				lineNumbers: true,
+				matchBrackets: true,
+				continueComments: "Enter",
+				extraKeys: {"Ctrl-Q": "toggleComment"},
+				autoRefresh:true,
+				mode: "json"
+			  });
+	this.codemirror.on('change', (cm) => {
+		this.$set(this.data, 'value', cm.getValue());
+    });
+  }
+});
+
+Vue.component('javascript-editor',{
+  template: '<div><textarea id="javascriptEditor">{{data.value}}</textarea></div>',
+  props:['data'],
+  mounted(){
+	this.codemirror = CodeMirror.fromTextArea(document.getElementById('javascriptEditor'), {
+				lineNumbers: true,
+				matchBrackets: true,
+				continueComments: "Enter",
+				extraKeys: {"Ctrl-Q": "toggleComment"},
+				autoRefresh:true,
+				mode: "javascript"
+			  });
+	this.codemirror.on('change', (cm) => {
+		this.$set(this.data, 'value', cm.getValue());
+    });
+  }
 });

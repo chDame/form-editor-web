@@ -8,12 +8,14 @@ let template = '<my-header apptitle="Ed!t0r"></my-header>'+
 				'<div :class="[$store.state.preview ? \'p-3 bg-light border rounded preview\' : \'bg-light border rounded edition\']">'+
 					'<form-content :content="$store.state.form.content"></form-content>'+
 				'</div>'+
+				'<data-panel></data-panel>'+
 			'</main>'+
 			'<div  v-if="!$store.state.preview" class="col-auto px-0">'+
 				'<properties-side-bar></properties-side-bar>'+
 			'</div>'+
 		'</div>'+
-	'</div>';
+	'</div>'+
+	'<data-modal></data-modal>';
 
 window.dropZone = null;
 
@@ -53,15 +55,11 @@ export function builder() {
 						preview: false,
 						form: {'id':null,
 							'name': 'newForm',
-							'content':[]},
+							'content':[],
+							'data':[]},
 						currentField:null,
 						fieldTypeMap:[],
 						menu: menu,
-					},
-					mutations: {
-						increment (state) {
-							state.count++
-						}
 					}
 				}),
 				data: function () {

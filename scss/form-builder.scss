@@ -4,11 +4,8 @@ nav {
 .navbar .dropdown-item {
     width: 280px;
 }
-#sidebar-nav {
-	//width:160px;
-}
+
 #widgetAccordions {
-    //position: fixed;
     width: 160px;
     height: calc(100vh - 55px);
 }
@@ -16,19 +13,21 @@ nav {
 	width:250px;
     height: calc(100vh - 55px);
 	overflow:auto;
+	label.form-label {
+		font-size: 0.8em;
+		margin: 0;
+	}
+	.input-group .input-group-text {
+		font-size: 0.8em;
+		padding: 8px;
+	}
+	.input-group.half {
+		width: 48%;
+		display: inline-flex;
+	}
 }
-#properties-nav label.form-label {
-	font-size: 0.8em;
-	margin: 0;
-}
-#properties-nav .input-group .input-group-text {
-	font-size: 0.8em;
-	padding: 8px;
-}
-#properties-nav .input-group.half {
-	width: 48%;
-	display: inline-flex;
-}
+
+
 #sidebar-nav .accordion-item,
 #properties-nav .accordion-item {
 	border: 0px;
@@ -37,7 +36,29 @@ nav {
 #properties-nav .accordion-button {
 	box-shadow: 0px 2px 5px #444;
 }
+
+#data-panel {
+    position: absolute;
+    left: 0px;
+    width: 100%;
+    bottom: 0px;
+	.card-header {
+	    cursor: grab;
+		span {
+			user-select: none;
+		}
+	}
+	
+}
+#dataModal {
+
+	.CodeMirror {
+		border: 1px solid #ced4da;
+		border-radius: 4px;
+	}
+}
 main {
+	position: relative;
 	background: #fff;
     height: calc(100vh - 55px);
     overflow: auto;

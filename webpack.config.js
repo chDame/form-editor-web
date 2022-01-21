@@ -5,7 +5,7 @@ const terser = require('terser');
 
 
 module.exports = {
-   entry: ["./scss/form-builder.scss", "./scss/bootstrap-5.0.2/bootstrap.scss", "./scss/font/bootstrap-icons-1.7.2.scss", './js/form-components.js', './js/editor-components.js', './js/components.js', './js/editor-props.js', './js/form-builder.js'],
+   entry: ["./scss/form-builder.scss", "./scss/codemirror.scss", "./scss/bootstrap-5.0.2/bootstrap.scss", "./scss/font/bootstrap-icons-1.7.2.scss", './js/form-components.js', './js/editor-components.js', './js/components.js', './js/editor-props.js', './js/form-builder.js'],
    mode: 'production',
    output: {
     filename: 'FormEditor.bundle.js',
