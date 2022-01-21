@@ -172,7 +172,6 @@ Vue.component('data-panel',{
 	'<div class="card-body" :style="style"><table class="table table-dark table-striped table-hover">'+
 		'<thead><tr><th scope="col">#</th><th scope="col">Name</th><th scope="col">Type</th><th scope="col">value</th><th scope="col"></th></tr></thead>'+
 		'<tbody>'+
-			'<tr><th>1</th><td>{{$store.state.form.data[0].name}}</td></tr>'+
 			'<tr v-for="(data, i) in $store.state.form.data">'+
 				'<th scope="row">{{i}}</th>'+
 				'<td>{{data.name}}</td>'+
