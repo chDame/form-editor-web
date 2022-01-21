@@ -97,52 +97,37 @@ Vue.component('widget-side-bar',{
   }
 });
 
+Vue.component('prop-accordion-item', {
+  template: '<div class="accordion-item">'+
+				'<h2 class="accordion-header">'+
+					'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" :data-bs-target="\'#\'+itemid">{{title}}</button>'+
+				'</h2>'+
+				'<div :id="itemid" :class="show ? \'accordion-collapse collapse show\' : \'accordion-collapse collapse\'">'+
+					'<div class="accordion-body bg-secondary"><slot></slot></div>'+
+				'</div>'+
+			'</div>',
+	props:['itemid', 'title', 'show']
+});	
+
 Vue.component('properties-side-bar',{
   template: '<div id="sidebar-properties" class="collapse collapse-horizontal show border-start">'+
 				'<div id="properties-nav" class="card text-white bg-secondary border-0 rounded-0 text-sm-start">'+
 					'<div class="accordion" v-if="$store.state.currentField!=null">'+
-						'<div class="accordion-item">'+
-							'<h2 class="accordion-header">'+
-								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#properties-general" aria-expanded="true" aria-controls="properties-general">'+
-									'{{$store.state.currentField.display}}'+
-								'</button>'+
-							'</h2>'+
-							'<div id="properties-general" class="accordion-collapse collapse show">'+
-								'<div class="accordion-body bg-secondary">'+
-									'<prop-text :propdef="{\'name\':\'id\',\'required\':true}"></prop-text>'+
-								'</div>'+
+						'<prop-accordion-item itemid="properties-general" :title="$store.state.currentField.display" :show=false>'+
+							'<prop-text :propdef="{\'name\':\'id\',\'required\':true}"></prop-text>'+
+						'</prop-accordion-item>'+
+						'<prop-accordion-item itemid="properties-display" title="Display" :show=true>'+
+							'<prop-boolean :propdef="{\'name\':\'hidden\'}"></prop-boolean>'+
+							'<display-comp icon="phone" property="xs"></display-comp>'+
+							'<display-comp icon="tablet-landscape" property="sm"></display-comp>'+
+							'<display-comp icon="laptop" property="md"></display-comp>'+
+							'<display-comp icon="display" property="lg"></display-comp>'+
+						'</prop-accordion-item>'+
+						'<prop-accordion-item itemid="properties-other" title="Other" :show=true>'+
+							'<div v-for="prop in $store.state.fieldTypeMap[$store.state.currentField.nature]">'+
+								'<prop-component :propdef="prop"></prop-component>'+
 							'</div>'+
-						'</div>'+
-						'<div class="accordion-item" v-if="$store.state.currentField.sizeable">'+
-							'<h2 class="accordion-header">'+
-								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#properties-display" aria-expanded="true" aria-controls="properties-display">'+
-									'Display'+
-								'</button>'+
-							'</h2>'+
-							'<div id="properties-display" class="accordion-collapse collapse show">'+
-								'<div class="accordion-body bg-secondary">'+
-									'<prop-boolean :propdef="{\'name\':\'hidden\'}"></prop-boolean>'+
-									'<display-comp icon="phone" property="xs"></display-comp>'+
-									'<display-comp icon="tablet-landscape" property="sm"></display-comp>'+
-									'<display-comp icon="laptop" property="md"></display-comp>'+
-									'<display-comp icon="display" property="lg"></display-comp>'+
-								'</div>'+
-							'</div>'+
-						'</div>'+
-						'<div class="accordion-item">'+
-							'<h2 class="accordion-header">'+
-								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#properties-other" aria-expanded="true" aria-controls="properties-other">'+
-									'Other'+
-								'</button>'+
-							'</h2>'+
-							'<div id="properties-other" class="accordion-collapse collapse show">'+
-								'<div class="accordion-body bg-secondary">'+
-									'<div v-for="prop in $store.state.fieldTypeMap[$store.state.currentField.nature]">'+
-										'<prop-component :propdef="prop"></prop-component>'+
-									'</div>'+
-								'</div>'+
-							'</div>'+
-						'</div>'+
+						'</prop-accordion-item>'+
 					'</div>'+
 				'</div>'+
 			'</div>'
