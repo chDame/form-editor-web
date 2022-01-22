@@ -33,6 +33,7 @@ Vue.component('widgets-list',{
 			clone.props.sm=12;
 			clone.props.xs=12;
 		}
+		clone.propsFn={};
 		clone.props.id = clone.display+(this.$store.state.globalId++);
 		return clone;
 	}
@@ -79,7 +80,7 @@ Vue.component('properties-side-bar',{
 						'</accordion-item>'+
 						'<accordion-item itemid="properties-other" title="Other" :show=true>'+
 							'<div v-for="prop in $store.state.fieldTypeMap[$store.state.currentField.nature]">'+
-								'<prop-component :propdef="prop"></prop-component>'+
+								'<prop-component :propdef="prop" :fnenabled=true></prop-component>'+
 							'</div>'+
 						'</accordion-item>'+
 					'</div>'+

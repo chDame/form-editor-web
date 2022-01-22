@@ -128,7 +128,7 @@ export function builder() {
 								},
 								{
 									'name':'label',
-									'type': 'text'
+									'type': 'text',
 								},
 								{
 									'name':'labelPosition',
