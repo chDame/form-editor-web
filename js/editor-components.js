@@ -18,58 +18,11 @@ Vue.component('my-header',{ template: '<nav class="navbar navbar-light bg-dark t
 	'</nav>',
   props: ['apptitle']
  });
-Vue.component('widget-side-bar',{
-  template: '<div id="sidebar" class="collapse collapse-horizontal show border-end">'+
-				'<div id="sidebar-nav" class="list-group bg-secondary border-0 rounded-0 text-sm-start">'+
-				
-					'<div class="accordion" id="widgetAccordions" >'+
-						'<div class="accordion-item">'+
-							'<h2 class="accordion-header">'+
-								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#containers-widgets" aria-expanded="true" aria-controls="containers-widgets">Containers</button>'+
-							'</h2>'+
-							'<div id="containers-widgets" class="accordion-collapse collapse show" data-bs-parent="#widgetAccordions">'+
-								'<div class="bg-secondary">'+
-									'<draggable :list="containers" :group="{ name: \'form\', pull: \'clone\', put: false}" :clone="cloneWidget" :move="moveWidget" @end="endDrag">'+
-										'<div v-for="(widget, i) in containers" :key="i" class="widgetbtn">'+
-											' <i :class="\'widgetIcon \'+widget.props.icon"></i>{{ widget.display }}'+
-										'</div>'+
-									'</draggable>'+
-								'</div></div></div>'+
-						'<div class="accordion-item">'+
-							'<h2 class="accordion-header">'+
-								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#standard-widgets" aria-expanded="true" aria-controls="standard-widgets">Widgets</button>'+
-							'</h2>'+
-							'<div id="standard-widgets" class="accordion-collapse collapse" data-bs-parent="#widgetAccordions">'+
-								'<div class="bg-secondary">'+
-									'<draggable :list="widgets" :group="{ name: \'form\', pull: \'clone\', put: false}" :clone="cloneWidget" :move="moveWidget" @end="endDrag">'+
-										'<div v-for="(widget, i) in widgets" :key="i" class="widgetbtn">'+
-											' <i :class="\'widgetIcon \'+widget.props.icon"></i>{{ widget.display }}'+
-										'</div>'+
-									'</draggable>'+
-								'</div></div></div>'+
-						'<div class="accordion-item" v-if="customwidgets.length>0">'+
-							'<h2 class="accordion-header">'+
-								'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#custom-widgets" aria-expanded="true" aria-controls="custom-widgets">Custom</button>'+
-							'</h2>'+
-							'<div id="custom-widgets" class="accordion-collapse collapse" data-bs-parent="#widgetAccordions">'+
-								'<div class="bg-secondary">'+
-									'<draggable :list="customwidgets" :group="{ name: \'form\', pull: \'clone\', put: false}" :clone="cloneWidget" :move="moveWidget" @end="endDrag">'+
-										'<div v-for="(widget, i) in customwidgets" :key="i" class="widgetbtn">'+
-											' <i :class="\'widgetIcon \'+widget.props.icon"></i>{{ widget.display }}'+
-										'</div>'+
-									'</draggable>'+
-								'</div></div></div>'+
-					'</div>'+
-				
-					'<draggable v-else :list="widgets" :group="{ name: \'form\', pull: \'clone\', put: false}" :clone="cloneWidget" :move="moveWidget" @end="endDrag">'+
-						'<div v-for="(widget, i) in widgets" :key="i" class="widgetbtn">'+
-							' <i :class="\'widgetIcon \'+widget.props.icon"></i>{{ widget.display }}'+
-						'</div>'+
-					'</draggable>'+
-				
-				'</div>'+
-			'</div>',
-  props: ['containers', 'widgets', 'customwidgets'],
+Vue.component('widgets-list',{
+  template: '<draggable :list="list" :group="{ name: \'form\', pull: \'clone\', put: false}" :clone="cloneWidget">'+
+				'<div v-for="widget in list" class="widgetbtn"><i :class="\'widgetIcon \'+widget.props.icon"></i>{{ widget.display }}</div>'+
+			'</draggable>',
+  props: ['list'],
   methods: {
 	cloneWidget(obj) {
 		var clone = JSON.parse(JSON.stringify(obj));
@@ -82,52 +35,53 @@ Vue.component('widget-side-bar',{
 		}
 		clone.props.id = clone.display+(this.$store.state.globalId++);
 		return clone;
-	},
-	moveWidget(evt) {
-		//if (window.dropZone!=null) {
-		//	window.dropZone.classList.remove("highlight");
-		//}
-		//evt.to.classList.add("highlight");
-		//window.dropZone = evt.to;
-	},
-	endDrag(evt) {
-		//window.dropZone.classList.remove("highlight");
-		//window.dropZone = null;
 	}
   }
 });
+Vue.component('widget-side-bar',{
+  template: '<div id="sidebar" class="collapse collapse-horizontal show border-end">'+
+		'<div id="sidebar-nav" class="list-group bg-secondary border-0 rounded-0 text-sm-start">'+		
+			'<div class="accordion" id="widgetAccordions">'+
+				'<accordion-item itemid="containers-widgets" title="Containers" :show=false parentId="#widgetAccordions"><widgets-list :list="containers"/></accordion-item>'+
+				'<accordion-item itemid="standard-widgets" title="Widgets" :show=true parentId="#widgetAccordions"><widgets-list :list="widgets"/></accordion-item>'+
+				'<accordion-item v-if="customwidgets.length>0" itemid="custom-widgets" title="Custom" :show=false parentId="#widgetAccordions"><widgets-list :list="customwidgets"/></accordion-item>'+
+			'</div>'+
+		'</div>'+
+	'</div>',
+  props: ['containers', 'widgets', 'customwidgets']
+});
 
-Vue.component('prop-accordion-item', {
+Vue.component('accordion-item', {
   template: '<div class="accordion-item">'+
 				'<h2 class="accordion-header">'+
 					'<button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" :data-bs-target="\'#\'+itemid">{{title}}</button>'+
 				'</h2>'+
-				'<div :id="itemid" :class="show ? \'accordion-collapse collapse show\' : \'accordion-collapse collapse\'">'+
+				'<div :id="itemid" :class="show ? \'accordion-collapse collapse show\' : \'accordion-collapse collapse\'"  :data-bs-parent="parentId">'+
 					'<div class="accordion-body bg-secondary"><slot></slot></div>'+
 				'</div>'+
 			'</div>',
-	props:['itemid', 'title', 'show']
+	props:['itemid', 'title', 'show', 'parentId']
 });	
 
 Vue.component('properties-side-bar',{
   template: '<div id="sidebar-properties" class="collapse collapse-horizontal show border-start">'+
 				'<div id="properties-nav" class="card text-white bg-secondary border-0 rounded-0 text-sm-start">'+
 					'<div class="accordion" v-if="$store.state.currentField!=null">'+
-						'<prop-accordion-item itemid="properties-general" :title="$store.state.currentField.display" :show=false>'+
+						'<accordion-item itemid="properties-general" :title="$store.state.currentField.display" :show=false>'+
 							'<prop-text :propdef="{\'name\':\'id\',\'required\':true}"></prop-text>'+
-						'</prop-accordion-item>'+
-						'<prop-accordion-item itemid="properties-display" title="Display" :show=true>'+
+						'</accordion-item>'+
+						'<accordion-item itemid="properties-display" title="Display" :show=true>'+
 							'<prop-boolean :propdef="{\'name\':\'hidden\'}"></prop-boolean>'+
 							'<display-comp icon="phone" property="xs"></display-comp>'+
 							'<display-comp icon="tablet-landscape" property="sm"></display-comp>'+
 							'<display-comp icon="laptop" property="md"></display-comp>'+
 							'<display-comp icon="display" property="lg"></display-comp>'+
-						'</prop-accordion-item>'+
-						'<prop-accordion-item itemid="properties-other" title="Other" :show=true>'+
+						'</accordion-item>'+
+						'<accordion-item itemid="properties-other" title="Other" :show=true>'+
 							'<div v-for="prop in $store.state.fieldTypeMap[$store.state.currentField.nature]">'+
 								'<prop-component :propdef="prop"></prop-component>'+
 							'</div>'+
-						'</prop-accordion-item>'+
+						'</accordion-item>'+
 					'</div>'+
 				'</div>'+
 			'</div>'
@@ -136,7 +90,7 @@ Vue.component('properties-side-bar',{
   
 Vue.component('data-panel',{
   template: '<div id="data-panel" class="card collapse collapse-vertical show">'+
-	'<div class="card-header bg-secondary text-light d-flex justify-content-between" @drag="press" @dragend="release" draggable=true><span>Data Panel</span>'+
+	'<div class="card-header bg-secondary text-light d-flex justify-content-between" @drag="drag" @dragend="release" draggable=true><span>Data Panel</span>'+
 		'<button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#dataModal"><i class="bi bi-plus-lg"></i></button>'+
 	'</div>'+
 	'<div class="card-body" :style="style"><table class="table table-dark table-striped table-hover">'+
@@ -159,7 +113,7 @@ Vue.component('data-panel',{
 	}
   },
   methods: {
-	  press: function(evt){
+	  drag: function(evt){
 		  if (this.clientY!=null) {
 			  this.height=this.height-evt.clientY+this.clientY;
 		  }

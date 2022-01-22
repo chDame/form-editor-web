@@ -8,6 +8,10 @@ nav {
 #widgetAccordions {
     width: 160px;
     height: calc(100vh - 55px);
+	
+	.accordion-body {
+		padding: 0;
+	}
 }
 #properties-nav {
 	width:250px;
