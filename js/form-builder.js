@@ -65,7 +65,7 @@ export function builder() {
 					},
 					mutations: {
 					  changePropValue (state, propValue) {
-						  state.currentField.propsFn[propValue.prop.name] = {"active":true, "value": propValue.value};
+						  Vue.set(state.currentField.propsFn, propValue.prop.name, {"active":true, "value": propValue.value});
 					  }
 					}
 				}),

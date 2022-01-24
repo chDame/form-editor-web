@@ -42,7 +42,7 @@ Vue.component('prop-fn', {
 	  fn() {
 		this.valueType='f(x)';
 		if (!this.$store.state.currentField.propsFn[this.propdef.name]) {
-			this.$store.state.currentField.propsFn[this.propdef.name]={"active":true, "value":""};
+			this.$store.commit('changePropValue', {"prop": this.propdef, "value": ""});
 		} else {
 			this.$store.state.currentField.propsFn[this.propdef.name].active=true;
 		}
@@ -64,7 +64,7 @@ Vue.component('prop-fn', {
   computed:{
 	propValue: {
 		get () {
-		  return this.$store.state.currentField.propsFn[this.propdef.name].value;
+			return this.$store.state.currentField.propsFn[this.propdef.name].value;
 		},
 		set (value) {
 		  this.$store.commit('changePropValue', {"prop": this.propdef, "value": value});
