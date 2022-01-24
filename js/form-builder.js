@@ -60,6 +60,7 @@ export function builder() {
 							'data':[]},
 						currentField:null,
 						currentProp:null,
+						currentData:null,
 						fieldTypeMap:[],
 						menu: menu,
 					},

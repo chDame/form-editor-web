@@ -103,18 +103,26 @@ Vue.component('data-panel',{
 				'<td>{{data.name}}</td>'+
 				'<td>{{data.type}}</td>'+
 				'<td>{{data.value}}</td>'+
-				'<td>blop</td>'+
+				'<td><i @click="modifyData(data)" class="data-action bi bi-pencil"></i><i @click="deleteData(i)" class="data-action bi bi-trash"></i></td>'+
 			'</tr>'+
 		'</tbody>'+
 	'</table></div>'+
   '</div>',
-  data:function () {
+  data() {
     return {
       height: 100,
 	  clientY:null
 	}
   },
   methods: {
+	  modifyData:function(data) {
+		this.$store.state.currentData = data;  
+		let modal = new bootstrap.Modal(document.getElementById('dataModal'), {});
+		modal.show();
+	  },
+	  deleteData:function(i) {
+		  this.$store.state.form.data.splice(i,1);
+	  },
 	  drag: function(evt){
 		  if (this.clientY!=null) {
 			  this.height=this.height-evt.clientY+this.clientY;
@@ -139,11 +147,12 @@ Vue.component('data-modal',{
   '<div class="modal-dialog">'+
     '<div class="modal-content">'+
       '<div class="modal-header bg-secondary text-light">'+
-        '<h5 class="modal-title">Create a new data</h5>'+
+        '<h5 class="modal-title" v-if="this.$store.state.currentData">Update {{this.$store.state.currentData.name}}</h5>'+
+        '<h5 class="modal-title" v-else="this.$store.state.currentData">Create a new data</h5>'+
         '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'+
       '</div>'+
       '<div class="modal-body">'+
-        '<div class="input-group mb-3">'+
+        '<div class="input-group mb-3" v-if="!this.$store.state.currentData">'+
 			'<span class="input-group-text">Name</span>'+
 			'<input type="text" class="form-control" placeholder="Name" v-model="data.name">'+
         '</div>'+
@@ -164,40 +173,60 @@ Vue.component('data-modal',{
 			'<span class="input-group-text" v-if="data.type==\'URL parameter\'">Parameter name</span>'+
 			'<input type="text" class="form-control" placeholder="Value" v-model="data.value">'+
         '</div>'+
-		'<json-editor v-if="data.type==\'JSON\'" :data="data"></json-editor>'+
-		'<javascript-editor v-if="data.type==\'Javascript\'" :data="data"></javascript-editor>'+
+		'<json-editor v-if="shown && data.type==\'JSON\'" :data="data"></json-editor>'+
+		'<javascript-editor v-if="shown && data.type==\'Javascript\'" :data="data"></javascript-editor>'+
       '</div>'+
       '<div class="modal-footer">'+
-        '<button type="button" class="btn btn-primary" @click="addData" data-bs-dismiss="modal">Save</button>'+
+        '<button type="button" class="btn btn-primary" @click="saveData" data-bs-dismiss="modal">Save</button>'+
         '<button class="btn btn-link" data-bs-dismiss="modal">Cancel</button>'+
       '</div>'+
     '</div>'+
   '</div>'+
 '</div>',
-  data:function () {
+  data() {
     return {
 		data: {
 		  name: "",
 		  type:"String",
 		  value:"",
-		}
+		},
+		shown:false
 	}
   },
   methods: {
-	  clear: function() {
-		  this.data.name="";
-		  this.data.type="String";
+	  displayEditor(){
+		  this.shown = true;
+	  },
+	  prepareData() {
+		  if (this.$store.state.currentData) {
+			  this.data = Object.assign({}, this.$store.state.currentData);
+		  } else {
+			this.data.name="";
+			this.data.type="String";
+			this.data.value="";
+		  }
+	  },
+	  saveData() {
+		  if (this.$store.state.currentData) {
+			  this.$store.state.currentData.type=this.data.type;
+			  this.$store.state.currentData.value=this.data.value;
+		  }
+		  else {
+			  this.$store.state.form.data.push(Object.assign({}, this.data));
+		  }
+	  },
+	  changeType() {
 		  this.data.value="";
 	  },
-	  addData: function() {
-		  this.$store.state.form.data.push(this.data);
-	  },
-	  changeType: function() {
-		  this.data.value="";
+	  closeModal(){
+		  this.shown = false;
+		  this.$store.state.currentData = null;
 	  }
   },
   mounted(){
-	document.getElementById("dataModal").addEventListener('show.bs.modal', this.clear);
+	document.getElementById("dataModal").addEventListener('show.bs.modal', this.prepareData);
+	document.getElementById("dataModal").addEventListener('shown.bs.modal', this.displayEditor);
+	document.getElementById("dataModal").addEventListener('hidden.bs.modal', this.closeModal);
   }
 });
 
@@ -243,7 +272,7 @@ Vue.component('fn-prop-modal',{
     '<div class="modal-content">'+
       '<div class="modal-header bg-secondary text-light">'+
         '<h5 class="modal-title" v-if="$store.state.currentProp">F(x) : {{$store.state.currentProp.name}}</h5>'+
-        '<button type="button" class="btn-close" @click="closeEditor" data-bs-dismiss="modal" aria-label="Close"></button>'+
+        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'+
       '</div>'+
       '<div class="modal-body">'+
 		'<javascript-editor v-if="shown==true" :data="data"></javascript-editor>'+
@@ -251,7 +280,7 @@ Vue.component('fn-prop-modal',{
       '</div>'+
       '<div class="modal-footer">'+
         '<button type="button" class="btn btn-primary" @click="changeProperty" data-bs-dismiss="modal">Save</button>'+
-        '<button class="btn btn-link" @click="closeEditor" data-bs-dismiss="modal">Cancel</button>'+
+        '<button class="btn btn-link" data-bs-dismiss="modal">Cancel</button>'+
       '</div>'+
     '</div>'+
   '</div>'+
@@ -273,7 +302,6 @@ Vue.component('fn-prop-modal',{
 	  },
 	  changeProperty() {
 		  this.$store.commit('changePropValue', {"prop": this.$store.state.currentProp, "value": this.data.value});
-		  this.shown = false;
 	  },
 	  closeEditor(){
 		  this.shown = false;
@@ -282,5 +310,6 @@ Vue.component('fn-prop-modal',{
   mounted(){
 	document.getElementById("fnPropModal").addEventListener('show.bs.modal', this.prepareDisplay);
 	document.getElementById("fnPropModal").addEventListener('shown.bs.modal', this.displayEditor);
+	document.getElementById("fnPropModal").addEventListener('hidden.bs.modal', this.closeEditor);
   }
 });
