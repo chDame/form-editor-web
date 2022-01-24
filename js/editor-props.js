@@ -5,17 +5,72 @@ Vue.component('display-comp', {
 			'</div>',
   props: ['icon', 'property']
 })
-Vue.component('prop-component', {
-  template: "<component v-if='display' :is='\"prop-\"+propdef.type' :propdef='propdef' :fnenabled='fnenabled'></component>",
+
+Vue.component('simple-text', {
+  template: "<input type='text' class='form-control' v-model='$store.state.currentField.props[propdef.name]'/>",
+  props: ['propdef']
+})
+Vue.component('simple-number', {
+  template: "<input type='number' class='form-control' v-model='$store.state.currentField.props[propdef.name]'/>",
+  props: ['propdef']
+})
+Vue.component('simple-boolean', {
+  template: "<div class='input-group-text'><input class='form-check-input mt-0 p-2 me-2' type='checkbox' v-model='$store.state.currentField.props[propdef.name]'><label class='form-check-label'>{{propdef.name}}</label></div>",
+  props: ['propdef']
+})
+
+Vue.component('prop-fn', {
+  template: "<div v-if='display' class='property-field'><label :class='labelClass' v-if='littType!=\"bool\" || valueType==\"f(x)\"'>{{propdef.name}}</label>"+
+	"<div class='input-group mb-1'><span class='input-group-text' v-if='!fnenabled'>{{littType}}</span>"+
+	"<button v-else class='btn btn-switch-prop dropdown-toggle' type='button' data-bs-toggle='dropdown'>{{valueType}}</button>"+
+	"<ul v-if='fnenabled' class='dropdown-menu'>"+
+		"<li><a class='dropdown-item' @click='litteral'>{{littType}}</a></li>"+
+		"<li><a class='dropdown-item' @click='fn'>f(x)</a></li>"+
+	"</ul><component v-if='valueType==littType' :is='\"simple-\"+propdef.type' :propdef='propdef'/>"+
+	"<input v-else type='text' class='form-control' v-model='propValue'/>"+
+  "</div><i v-if='valueType!=littType' class='overlay bi bi-fullscreen' @click='openFnPropModal'></i></div>",
   props: ['propdef', 'fnenabled'],
-  data(){
-  	return {
-    	condition:this.propdef.condition,
-		field:this.$store.state.currentField
-    }
+  data() {
+	  return {
+		  condition:this.propdef.condition,
+		  field:this.$store.state.currentField,
+		  littType:null,
+		  valueType:null
+	  }
+  },
+  methods: {
+	  fn() {
+		this.valueType='f(x)';
+		if (!this.$store.state.currentField.propsFn[this.propdef.name]) {
+			this.$store.state.currentField.propsFn[this.propdef.name]={"active":true, "value":""};
+		} else {
+			this.$store.state.currentField.propsFn[this.propdef.name].active=true;
+		}
+	  },
+	  litteral() {
+		this.valueType=this.littType;
+		this.$store.state.currentField.propsFn[this.propdef.name].active=false;
+	  },
+	  openFnPropModal() {
+		  this.$store.state.currentProp = this.propdef;
+		  let modal = new bootstrap.Modal(document.getElementById('fnPropModal'), {});
+		  modal.show();
+	  }
+  },
+  created() {
+	  this.littType=this.propdef.type=='text'?'abc':this.propdef.type=='number'?'123':'bool';
+	  this.valueType=this.$store.state.currentField.propsFn[this.propdef.name] && this.$store.state.currentField.propsFn[this.propdef.name].active?'f(x)':this.littType;  
   },
   computed:{
-  	display(){
+	propValue: {
+		get () {
+		  return this.$store.state.currentField.propsFn[this.propdef.name].value;
+		},
+		set (value) {
+		  this.$store.commit('changePropValue', {"prop": this.propdef, "value": value});
+		}
+	},
+	display(){
     	with(this){
       	try{
 			if (!condition) {
@@ -26,39 +81,7 @@ Vue.component('prop-component', {
         	console.log(error.message);
         }      	
       }
-    }
-  }
-})
-
-Vue.component('prop-text', {
-  template: "<div><label :class='labelClass'>{{propdef.name}}</label>"+
-	"<div class='input-group mb-1'><span class='input-group-text' v-if='!fnenabled'>abc</span>"+
-	"<button v-else class='btn btn-switch-prop dropdown-toggle' type='button' data-bs-toggle='dropdown'>{{valueType}}</button>"+
-	"<ul v-if='fnenabled' class='dropdown-menu'>"+
-		"<li><a class='dropdown-item' @click='litteral'>abc</a></li>"+
-		"<li><a class='dropdown-item' @click='fn'>f(x)</a></li>"+
-	"</ul><input v-if='valueType==\"abc\"' type='text' class='form-control' v-model='$store.state.currentField.props[propdef.name]'/>"+
-	"<input v-else='valueType==\"abc\"' type='text' class='form-control' v-model='$store.state.currentField.propsFn[propdef.name].value'/></div>"+
-  "</div>",
-  props: ['propdef', 'fnenabled'],
-  data() {
-	  return {'valueType':this.$store.state.currentField.propsFn[this.propdef.name] && this.$store.state.currentField.propsFn[this.propdef.name].active?'f(x)':'abc'}
-  },
-  methods: {
-	  fn() {
-		this.valueType='f(x)';
-		if (!this.$store.state.currentField.propsFn[this.propdef.name]) {
-			this.$store.state.currentField.propsFn[this.propdef.name]={"active":true, "value":""};
-		} else {
-			this.$store.state.currentField.propsFn[this.propdef.name].active=true;
-		}
-	  },
-	  litteral() {
-		this.valueType='abc';
-		this.$store.state.currentField.propsFn[this.propdef.name].active=false;
-	  }
-  },
-  computed:{
+    },
 	labelClass(){
 		if (this.propdef.required) {
 			return 'form-label required';
@@ -66,49 +89,8 @@ Vue.component('prop-text', {
 		return 'form-label';
 	}
   }
-})
-Vue.component('prop-number', {
-  template: "<div><label :class='labelClass'>{{propdef.name}}</label>"+
-	"<div class='input-group mb-1'><span class='input-group-text' v-if='!fnenabled'>123</span>"+
-	"<button v-else class='btn btn-switch-prop dropdown-toggle' type='button' data-bs-toggle='dropdown'>{{valueType}}</button>"+
-	"<ul v-if='fnenabled' class='dropdown-menu'>"+
-		"<li><a class='dropdown-item' @click='litteral'>123</a></li>"+
-		"<li><a class='dropdown-item' @click='fn'>f(x)</a></li>"+
-	"</ul><input v-if='valueType==\"123\"' type='number' class='form-control' v-model='$store.state.currentField.props[propdef.name]'/>"+
-	"<input v-else='valueType==\"123\"' type='text' class='form-control' v-model='$store.state.currentField.propsFn[propdef.name].value'/></div>"+
-  "</div>",
-  props: ['propdef', 'fnenabled'],
-  data() {
-	  return {'valueType':this.$store.state.currentField.propsFn[this.propdef.name] && this.$store.state.currentField.propsFn[this.propdef.name].active?'f(x)':'123'}
-  },
-  methods: {
-	  fn() {
-		this.valueType='f(x)';
-		if (!this.$store.state.currentField.propsFn[this.propdef.name]) {
-			this.$store.state.currentField.propsFn[this.propdef.name]={"active":true, "value":""};
-		} else {
-			this.$store.state.currentField.propsFn[this.propdef.name].active=true;
-		}
-	  },
-	  litteral() {
-		this.valueType='123';
-		this.$store.state.currentField.propsFn[this.propdef.name].active=false;
-	  }
-  },
-  computed:{
-	labelClass(){
-		if (this.propdef.required) {
-			return 'form-label required';
-		}
-		return 'form-label';
-	}
-  }
-})
-Vue.component('prop-boolean', {
-  template: "<div class='form-check mb-1'><input class='form-check-input' type='checkbox' v-model='$store.state.currentField.props[propdef.name]'><label class='form-check-label'>{{propdef.name}}</label></div>",
-  props: ['propdef', 'fnenabled']
 })
 Vue.component('prop-list', {
   template: "<div class='mb-1'><label class='form-label'>{{propdef.name}}</label><select class='form-select' v-model='$store.state.currentField.props[propdef.name]'><option v-for='(value, i) in propdef.values'>{{value}}</option></select></div>",
-  props: ['propdef', 'fnenabled']
+  props: ['propdef']
 })

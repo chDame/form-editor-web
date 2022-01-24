@@ -15,7 +15,8 @@ let template = '<my-header apptitle="Ed!t0r"></my-header>'+
 			'</div>'+
 		'</div>'+
 	'</div>'+
-	'<data-modal></data-modal>';
+	'<data-modal></data-modal>'+
+	'<fn-prop-modal></fn-prop-modal>';
 
 window.dropZone = null;
 
@@ -58,8 +59,14 @@ export function builder() {
 							'content':[],
 							'data':[]},
 						currentField:null,
+						currentProp:null,
 						fieldTypeMap:[],
 						menu: menu,
+					},
+					mutations: {
+					  changePropValue (state, propValue) {
+						  state.currentField.propsFn[propValue.prop.name] = {"active":true, "value": propValue.value};
+					  }
 					}
 				}),
 				data: function () {

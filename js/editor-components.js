@@ -69,10 +69,10 @@ Vue.component('properties-side-bar',{
 				'<div id="properties-nav" class="card text-white bg-secondary border-0 rounded-0 text-sm-start">'+
 					'<div class="accordion" v-if="$store.state.currentField!=null">'+
 						'<accordion-item itemid="properties-general" :title="$store.state.currentField.display" :show=false>'+
-							'<prop-text :propdef="{\'name\':\'id\',\'required\':true}"></prop-text>'+
+							'<prop-fn :propdef="{\'name\':\'id\', \'type\':\'text\', \'required\':true}" :fnenabled=false></prop-fn>'+
 						'</accordion-item>'+
 						'<accordion-item itemid="properties-display" title="Display" :show=true>'+
-							'<prop-boolean :propdef="{\'name\':\'hidden\'}"></prop-boolean>'+
+							'<prop-fn :propdef="{\'name\':\'hidden\', \'type\':\'boolean\'}" :fnenabled=true></prop-fn>'+
 							'<display-comp icon="phone" property="xs"></display-comp>'+
 							'<display-comp icon="tablet-landscape" property="sm"></display-comp>'+
 							'<display-comp icon="laptop" property="md"></display-comp>'+
@@ -80,7 +80,8 @@ Vue.component('properties-side-bar',{
 						'</accordion-item>'+
 						'<accordion-item itemid="properties-other" title="Other" :show=true>'+
 							'<div v-for="prop in $store.state.fieldTypeMap[$store.state.currentField.nature]">'+
-								'<prop-component :propdef="prop" :fnenabled=true></prop-component>'+
+								'<prop-list v-if="prop.type==\'list\'" :propdef="prop"></prop-list>'+
+								'<prop-fn v-else :propdef="prop" :fnenabled=true></prop-fn>'+
 							'</div>'+
 						'</accordion-item>'+
 					'</div>'+
@@ -138,7 +139,7 @@ Vue.component('data-modal',{
   '<div class="modal-dialog">'+
     '<div class="modal-content">'+
       '<div class="modal-header bg-secondary text-light">'+
-        '<h5 class="modal-title" id="exampleModalLabel">Create a new data</h5>'+
+        '<h5 class="modal-title">Create a new data</h5>'+
         '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'+
       '</div>'+
       '<div class="modal-body">'+
@@ -201,7 +202,7 @@ Vue.component('data-modal',{
 });
 
 Vue.component('json-editor',{
-  template: '<div><textarea id="jsonEditor">{{data.value}}</textarea></div>',
+  template: '<div><span class="form-label">JSON value</span><textarea id="jsonEditor">{{data.value}}</textarea></div>',
   props:['data'],
   mounted(){
 	this.codemirror = CodeMirror.fromTextArea(document.getElementById('jsonEditor'), {
@@ -219,7 +220,7 @@ Vue.component('json-editor',{
 });
 
 Vue.component('javascript-editor',{
-  template: '<div><textarea id="javascriptEditor">{{data.value}}</textarea></div>',
+  template: '<div><span class="form-label">Javascript</span><textarea id="javascriptEditor">{{data.value}}</textarea></div>',
   props:['data'],
   mounted(){
 	this.codemirror = CodeMirror.fromTextArea(document.getElementById('javascriptEditor'), {
@@ -233,5 +234,53 @@ Vue.component('javascript-editor',{
 	this.codemirror.on('change', (cm) => {
 		this.$set(this.data, 'value', cm.getValue());
     });
+  }
+});
+
+Vue.component('fn-prop-modal',{
+  template: '<div class="modal fade" id="fnPropModal" ref="fnPropModal" tabindex="-1">'+
+  '<div class="modal-dialog">'+
+    '<div class="modal-content">'+
+      '<div class="modal-header bg-secondary text-light">'+
+        '<h5 class="modal-title" v-if="$store.state.currentProp">F(x) : {{$store.state.currentProp.name}}</h5>'+
+        '<button type="button" class="btn-close" @click="closeEditor" data-bs-dismiss="modal" aria-label="Close"></button>'+
+      '</div>'+
+      '<div class="modal-body">'+
+		'<javascript-editor v-if="shown==true" :data="data"></javascript-editor>'+
+		'<i>to access the data, use the $data prefix. For example $data.myJsonData.attribute</i>'+
+      '</div>'+
+      '<div class="modal-footer">'+
+        '<button type="button" class="btn btn-primary" @click="changeProperty" data-bs-dismiss="modal">Save</button>'+
+        '<button class="btn btn-link" @click="closeEditor" data-bs-dismiss="modal">Cancel</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>'+
+'</div>',
+  data() {
+    return {
+		data: {
+		  value:""
+		},
+		shown:false
+	}
+  },
+  methods: {
+	  displayEditor(){
+		  this.shown = true;
+	  },
+	  prepareDisplay(){
+		  this.data.value = this.$store.state.currentField.propsFn[this.$store.state.currentProp.name].value;
+	  },
+	  changeProperty() {
+		  this.$store.commit('changePropValue', {"prop": this.$store.state.currentProp, "value": this.data.value});
+		  this.shown = false;
+	  },
+	  closeEditor(){
+		  this.shown = false;
+	  }
+  },
+  mounted(){
+	document.getElementById("fnPropModal").addEventListener('show.bs.modal', this.prepareDisplay);
+	document.getElementById("fnPropModal").addEventListener('shown.bs.modal', this.displayEditor);
   }
 });

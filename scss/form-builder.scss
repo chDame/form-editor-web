@@ -36,7 +36,20 @@ nav {
 		color: black;
 		font-size: 0.8em;
 		border: 1px solid #ced4da;
-		width: 45px;
+		width: 50px;
+	}
+	
+	.property-field {
+		position: relative;
+	
+		i.overlay {
+			position: absolute;
+			top: 25px;
+			right: 0px;
+			padding: 5px;
+			color: blue;
+			text-shadow: 1px 1px 3px #222;
+		}
 	}
 }
 
@@ -63,7 +76,8 @@ nav {
 	}
 	
 }
-#dataModal {
+#dataModal,
+#fnPropModal {
 
 	.CodeMirror {
 		border: 1px solid #ced4da;
