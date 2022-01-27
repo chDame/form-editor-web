@@ -1,9 +1,9 @@
 Vue.component('my-header',{ template: '<nav class="navbar navbar-light bg-dark text-light">'+
 		'<div class="container-fluid">'+
-			'<component v-if="$store.state.menu" :is="$store.state.menu"></component>'+
+			'<component v-if="$store.menu" :is="$store.menu"></component>'+
 			'<a v-else class="navbar-brand text-light" href="#">{{apptitle}}</a>'+
 			'<div class="btn-group" role="group" aria-label="Basic outlined example">'+
-			  '<template v-if="!$store.state.preview">'+
+			  '<template v-if="!$store.preview">'+
 				'<a data-bs-target="#sidebar" data-bs-toggle="collapse" type="button" class="btn btn-outline-light"><i class="bi bi-boxes"></i></a>'+
 				'<a data-bs-target="#sidebar-properties" data-bs-toggle="collapse" type="button" class="btn btn-outline-light"><i class="bi bi-card-list"></i></a>'+
 				'<a data-bs-target="#data-panel" data-bs-toggle="collapse" type="button" class="btn btn-outline-light"><i class="bi bi-braces"></i></a>'+
@@ -11,7 +11,7 @@ Vue.component('my-header',{ template: '<nav class="navbar navbar-light bg-dark t
 			'</div>'+
 			
 			'<div class="form-check">'+
-			  '<input class="form-check-input" type="checkbox" v-model="$store.state.preview" id="checkPreview">'+
+			  '<input class="form-check-input" type="checkbox" v-model="$store.preview" id="checkPreview">'+
 			  '<label class="form-check-label" for="checkPreview">Preview</label>'+
 			'</div>'+
 		'</div>'+
@@ -34,7 +34,7 @@ Vue.component('widgets-list',{
 			clone.props.xs=12;
 		}
 		clone.propsFn={};
-		clone.props.id = clone.display+(this.$store.state.globalId++);
+		clone.props.id = clone.display+(this.$store.globalId++);
 		return clone;
 	}
   }
@@ -67,8 +67,8 @@ Vue.component('accordion-item', {
 Vue.component('properties-side-bar',{
   template: '<div id="sidebar-properties" class="collapse collapse-horizontal show border-start">'+
 				'<div id="properties-nav" class="card text-white bg-secondary border-0 rounded-0 text-sm-start">'+
-					'<div class="accordion" v-if="$store.state.currentField!=null">'+
-						'<accordion-item itemid="properties-general" :title="$store.state.currentField.display" :show=false>'+
+					'<div class="accordion" v-if="$store.currentField!=null">'+
+						'<accordion-item itemid="properties-general" :title="$store.currentField.display" :show=false>'+
 							'<prop-fn :propdef="{\'name\':\'id\', \'type\':\'text\', \'required\':true}" :fnenabled=false></prop-fn>'+
 						'</accordion-item>'+
 						'<accordion-item itemid="properties-display" title="Display" :show=true>'+
@@ -79,7 +79,7 @@ Vue.component('properties-side-bar',{
 							'<display-comp icon="display" property="lg"></display-comp>'+
 						'</accordion-item>'+
 						'<accordion-item itemid="properties-other" title="Other" :show=true>'+
-							'<div v-for="prop in $store.state.fieldTypeMap[$store.state.currentField.nature]">'+
+							'<div v-for="prop in $store.fieldTypeMap[$store.currentField.nature]">'+
 								'<prop-list v-if="prop.type==\'list\'" :propdef="prop"></prop-list>'+
 								'<prop-fn v-else :propdef="prop" :fnenabled=true></prop-fn>'+
 							'</div>'+
@@ -98,7 +98,7 @@ Vue.component('data-panel',{
 	'<div class="card-body" :style="style"><table class="table table-dark table-striped table-hover">'+
 		'<thead><tr><th scope="col">#</th><th scope="col">Name</th><th scope="col">Type</th><th scope="col">value</th><th scope="col"></th></tr></thead>'+
 		'<tbody>'+
-			'<tr v-for="(data, i) in $store.state.form.data">'+
+			'<tr v-for="(data, i) in $store.form.data">'+
 				'<th scope="row">{{i}}</th>'+
 				'<td>{{data.name}}</td>'+
 				'<td>{{data.type}}</td>'+
@@ -116,12 +116,12 @@ Vue.component('data-panel',{
   },
   methods: {
 	  modifyData:function(data) {
-		this.$store.state.currentData = data;  
+		this.$store.currentData = data;  
 		let modal = new bootstrap.Modal(document.getElementById('dataModal'), {});
 		modal.show();
 	  },
 	  deleteData:function(i) {
-		  this.$store.state.form.data.splice(i,1);
+		  this.$store.form.data.splice(i,1);
 	  },
 	  drag: function(evt){
 		  if (this.clientY!=null) {
@@ -147,12 +147,12 @@ Vue.component('data-modal',{
   '<div class="modal-dialog">'+
     '<div class="modal-content">'+
       '<div class="modal-header bg-secondary text-light">'+
-        '<h5 class="modal-title" v-if="this.$store.state.currentData">Update {{this.$store.state.currentData.name}}</h5>'+
-        '<h5 class="modal-title" v-else="this.$store.state.currentData">Create a new data</h5>'+
+        '<h5 class="modal-title" v-if="this.$store.currentData">Update {{this.$store.currentData.name}}</h5>'+
+        '<h5 class="modal-title" v-else="this.$store.currentData">Create a new data</h5>'+
         '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'+
       '</div>'+
       '<div class="modal-body">'+
-        '<div class="input-group mb-3" v-if="!this.$store.state.currentData">'+
+        '<div class="input-group mb-3" v-if="!this.$store.currentData">'+
 			'<span class="input-group-text">Name</span>'+
 			'<input type="text" class="form-control" placeholder="Name" v-model="data.name">'+
         '</div>'+
@@ -198,8 +198,8 @@ Vue.component('data-modal',{
 		  this.shown = true;
 	  },
 	  prepareData() {
-		  if (this.$store.state.currentData) {
-			  this.data = Object.assign({}, this.$store.state.currentData);
+		  if (this.$store.currentData) {
+			  this.data = Object.assign({}, this.$store.currentData);
 		  } else {
 			this.data.name="";
 			this.data.type="String";
@@ -207,12 +207,12 @@ Vue.component('data-modal',{
 		  }
 	  },
 	  saveData() {
-		  if (this.$store.state.currentData) {
-			  this.$store.state.currentData.type=this.data.type;
-			  this.$store.state.currentData.value=this.data.value;
+		  if (this.$store.currentData) {
+			  this.$store.currentData.type=this.data.type;
+			  this.$store.currentData.value=this.data.value;
 		  }
 		  else {
-			  this.$store.state.form.data.push(Object.assign({}, this.data));
+			  this.$store.form.data.push(Object.assign({}, this.data));
 		  }
 	  },
 	  changeType() {
@@ -220,7 +220,7 @@ Vue.component('data-modal',{
 	  },
 	  closeModal(){
 		  this.shown = false;
-		  this.$store.state.currentData = null;
+		  this.$store.currentData = null;
 	  }
   },
   mounted(){
@@ -271,7 +271,7 @@ Vue.component('fn-prop-modal',{
   '<div class="modal-dialog">'+
     '<div class="modal-content">'+
       '<div class="modal-header bg-secondary text-light">'+
-        '<h5 class="modal-title" v-if="$store.state.currentProp">F(x) : {{$store.state.currentProp.name}}</h5>'+
+        '<h5 class="modal-title" v-if="$store.currentProp">F(x) : {{$store.currentProp.name}}</h5>'+
         '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'+
       '</div>'+
       '<div class="modal-body">'+
@@ -298,10 +298,10 @@ Vue.component('fn-prop-modal',{
 		  this.shown = true;
 	  },
 	  prepareDisplay(){
-		  this.data.value = this.$store.state.currentField.propsFn[this.$store.state.currentProp.name].value;
+		  this.data.value = this.$store.currentField.propsFn[this.$store.currentProp.name].value;
 	  },
 	  changeProperty() {
-		  this.$store.commit('changePropValue', {"prop": this.$store.state.currentProp, "value": this.data.value});
+		  this.$store.currentField.propsFn[this.$store.currentProp.name].value= this.data.value;
 	  },
 	  closeEditor(){
 		  this.shown = false;

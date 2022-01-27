@@ -1,16 +1,16 @@
 let template = '<my-header apptitle="Ed!t0r"></my-header>'+
 	'<div class="container-fluid bg-secondary">'+
 		'<div class="row flex-nowrap">'+
-			'<div class="col-auto px-0" v-if="!$store.state.preview" >'+
+			'<div class="col-auto px-0" v-if="!$store.preview" >'+
 				'<widget-side-bar :containers="containers" :widgets="widgets" :customwidgets="customWidgets"></widget-side-bar>'+
 			'</div>'+
 			'<main class="col ps-md-2 pt-2">'+
-				'<div :class="[$store.state.preview ? \'p-3 bg-light border rounded preview\' : \'bg-light border rounded edition\']">'+
-					'<form-content :content="$store.state.form.content"></form-content>'+
+				'<div :class="[$store.preview ? \'p-3 bg-light border rounded preview\' : \'bg-light border rounded edition\']">'+
+					'<form-content :content="$store.form.content"></form-content>'+
 				'</div>'+
 				'<data-panel></data-panel>'+
 			'</main>'+
-			'<div  v-if="!$store.state.preview" class="col-auto px-0">'+
+			'<div  v-if="!$store.preview" class="col-auto px-0">'+
 				'<properties-side-bar></properties-side-bar>'+
 			'</div>'+
 		'</div>'+
@@ -48,10 +48,7 @@ export function builder() {
 		},
 		
 		buildVueEditor: function(menu){
-			let vm = new Vue({
-				el: '#editorApp',
-				'store': new Vuex.Store({
-					state: {
+			Vue.prototype.$store = Vue.observable({
 						globalId:0,
 						preview: false,
 						form: {'id':null,
@@ -63,13 +60,10 @@ export function builder() {
 						currentData:null,
 						fieldTypeMap:[],
 						menu: menu,
-					},
-					mutations: {
-					  changePropValue (state, propValue) {
-						  Vue.set(state.currentField.propsFn, propValue.prop.name, {"active":true, "value": propValue.value});
-					  }
-					}
-				}),
+					});
+			let vm = new Vue({
+				el: '#editorApp',
+				
 				data: function () {
 					return {
 						customWidgets: [],
@@ -243,15 +237,15 @@ export function builder() {
 				methods: {
 					loadWidgetMap: function() {
 						for(let i=0;i<this.containers.length;i++) {
-							this.$store.state.fieldTypeMap[this.containers[i].nature]=this.containers[i].propsDef;
+							this.$store.fieldTypeMap[this.containers[i].nature]=this.containers[i].propsDef;
 						}
 						for(let i=0;i<this.widgets.length;i++) {
-							this.$store.state.fieldTypeMap[this.widgets[i].nature]=this.widgets[i].propsDef;
+							this.$store.fieldTypeMap[this.widgets[i].nature]=this.widgets[i].propsDef;
 						}
 					},
 					loadCustomWidgetMap: function() {
 						for(let i=0;i<this.customWidgets.length;i++) {
-							this.$store.state.fieldTypeMap[this.customWidgets[i].nature]=this.customWidgets[i].propsDef;
+							this.$store.fieldTypeMap[this.customWidgets[i].nature]=this.customWidgets[i].propsDef;
 						}
 					}
 				},

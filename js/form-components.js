@@ -1,8 +1,8 @@
 Vue.component('form-content',{
-  template: '<div :class="classname"><draggable v-if="!$store.state.preview" :list="content" class="dragArea row" group="form" ghost-class="ghost" :move="moveWidget" @end="endDrag" @change="verifyRow">'+
+  template: '<div :class="classname"><draggable v-if="!$store.preview" :list="content" class="dragArea row" group="form" ghost-class="ghost" @change="verifyRow">'+
 					'<form-field v-for="(field, i) in content" :field="field" :index="i" @send-deletion="deletion"></form-field>'+
 				'</draggable>'+
-				'<form-field v-if="$store.state.preview" v-for="(field, i) in content" :index="i" :field="field"></form-field>'+
+				'<form-field v-if="$store.preview" v-for="(field, i) in content" :index="i" :field="field"></form-field>'+
 			'</div>',
   props: ['content', 'classname'],
   methods: {
@@ -10,17 +10,6 @@ Vue.component('form-content',{
 		console.log(value);
 		this.content.splice(value, 1);
 		this.verifyRow();
-	},
-	moveWidget(evt) {
-		//if (dropZone!=null) {
-			//window.dropZone.classList.remove("highlight");
-		//}
-		//evt.to.classList.add("highlight");
-		//window.dropZone = evt.to;
-	},
-	endDrag(evt) {
-		//window.dropZone.classList.remove("highlight");
-		//window.dropZone = null;
 	},
 	checkSubContent(obj) {
 		if (obj.props.content) {
@@ -60,15 +49,15 @@ Vue.component('form-content',{
 		elt.props.content.push(clone);
 	},
 	verifyRow() {
-		for (var i=this.$store.state.form.content.length-1;i>=0;i--) {
-			if(this.$store.state.form.content[i].nature!='row-element') {
-				this.changeToRow(this.$store.state.form.content[i]);
-			} else if (this.$store.state.form.content[i].props.content.length==0) {
-				this.$store.state.form.content.splice(i, 1);
-			} else this.correctRow(this.$store.state.form.content[i]);
+		for (var i=this.$store.form.content.length-1;i>=0;i--) {
+			if(this.$store.form.content[i].nature!='row-element') {
+				this.changeToRow(this.$store.form.content[i]);
+			} else if (this.$store.form.content[i].props.content.length==0) {
+				this.$store.form.content.splice(i, 1);
+			} else this.correctRow(this.$store.form.content[i]);
 		}
-		if (this.$store.state.currentField && this.$store.state.currentField.nature=='row-element') {
-			this.$store.state.currentField = null;
+		if (this.$store.currentField && this.$store.currentField.nature=='row-element') {
+			this.$store.currentField = null;
 		}
 	}
   }
@@ -84,7 +73,7 @@ Vue.component('form-field',{
   methods: {
 	  select(event) {
 		if (this.field.nature!='row-element') {
-			this.$store.state.currentField = this.field;
+			this.$store.currentField = this.field;
 		}
 		event.stopPropagation();
 	  },
@@ -99,7 +88,7 @@ Vue.component('form-field',{
 		if (this.field.sizeable) {
 			className+=' col-lg-'+this.field.props.lg+' col-md-'+this.field.props.md+' col-sm-'+this.field.props.sm+' col-'+this.field.props.xs;
 		}
-		if (this.$store.state.currentField && this.$store.state.currentField.props.id == this.field.props.id) {
+		if (this.$store.currentField && this.$store.currentField.props.id == this.field.props.id) {
 			className+=' currentField';
 		}
 		return className;

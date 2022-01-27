@@ -21,7 +21,7 @@ Vue.component('my-menu',{ template: '<div class="dropdown">'+
 				'<div class="dropdown-item">'+
 					'<div class="input-group">'+
 						'<span class="input-group-text"><i class="bi bi-file-earmark-code"></i></span>'+
-						'<input type="text" class="form-control" placeholder="Form name" aria-label="Formname" v-model="$store.state.form.name">'+
+						'<input type="text" class="form-control" placeholder="Form name" aria-label="Formname" v-model="$store.form.name">'+
 						'<button class="btn btn-sm btn-primary" v-on:click="saveForm()">Save</button>'+
 					'</div>'+
 				'</div>'+
@@ -74,33 +74,32 @@ Vue.component('my-menu',{ template: '<div class="dropdown">'+
 		}
 	},
 	saveForm() {
-		let clone = JSON.parse(JSON.stringify(this.$store.state.form));
+		let clone = JSON.parse(JSON.stringify(this.$store.form));
 		this.prepareForSave(clone);
 
-		axios.post('http://localhost:8080/forms', clone).then(response => {
-			
-			this.$store.state.form.id = response.data.id; 
+		axios.post('http://localhost:8080/edition/forms', clone).then(response => {
+			this.$store.form.id = response.data.id; 
 		}).catch(error => {
 			alert(error.message); 
 		})
 	},
 	loadForm(name) {
-		axios.get('http://localhost:8080/forms/?name='+name).then(response => {
+		axios.get('http://localhost:8080/edition/forms?name='+name).then(response => {
 			let form = response.data[0]; 
 			this.prepareForLoad(form);
-			this.$store.state.form.id = form.id;
-			this.$store.state.form.name = form.name;
-			this.$store.state.form.content = form.content;
-			console.log(this.$store.state.form);
+			this.$store.form.id = form.id;
+			this.$store.form.name = form.name;
+			this.$store.form.content = form.content;
+			this.$store.form.data = form.data;
+			console.log(this.$store.form);
 		}).catch(error => {
 		console.log(error);
-			alert('pouet'); 
 			alert(error.message); 
 		})
 	}
   },
   created: function () {
-    axios.get('http://localhost:8080/forms/names').then(response => {
+    axios.get('http://localhost:8080/edition/forms/names').then(response => {
 		this.names = response.data; 
 	}).catch(error => {
 		alert(error.message); 
