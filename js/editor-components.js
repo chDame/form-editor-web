@@ -276,7 +276,7 @@ Vue.component('fn-prop-modal',{
       '</div>'+
       '<div class="modal-body">'+
 		'<javascript-editor v-if="shown==true" :data="data"></javascript-editor>'+
-		'<i>to access the data, use the $data prefix. For example $data.myJsonData.attribute</i>'+
+		'<i>to access the data, use the this.$store prefix. For example this.$store.myJsonData.attribute</i>'+
       '</div>'+
       '<div class="modal-footer">'+
         '<button type="button" class="btn btn-primary" @click="changeProperty" data-bs-dismiss="modal">Save</button>'+
