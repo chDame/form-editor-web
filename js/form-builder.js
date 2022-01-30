@@ -95,6 +95,7 @@ export function builder() {
 								'icon' : 'bi bi-input-cursor-text',
 								'class': '',
 								'label': 'label :',
+								'value': null,
 								'labelPosition': 'top',
 								'placeholder': 'placeholder',
 								'min': null,
@@ -131,6 +132,10 @@ export function builder() {
 								{
 									'name':'label',
 									'type': 'text',
+								},
+								{
+									'name':'value',
+									'type': 'binding',
 								},
 								{
 									'name':'labelPosition',

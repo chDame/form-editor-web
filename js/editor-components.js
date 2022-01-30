@@ -34,6 +34,7 @@ Vue.component('widgets-list',{
 			clone.props.xs=12;
 		}
 		clone.propsFn={};
+		clone.binding={};
 		clone.props.id = clone.display+(this.$store.globalId++);
 		return clone;
 	}
@@ -81,6 +82,7 @@ Vue.component('properties-side-bar',{
 						'<accordion-item itemid="properties-other" title="Other" :show=true>'+
 							'<div v-for="prop in $store.fieldTypeMap[$store.currentField.nature]">'+
 								'<prop-list v-if="prop.type==\'list\'" :propdef="prop"></prop-list>'+
+								'<prop-binding v-else-if="prop.type==\'binding\'" :propdef="prop"></prop-binding>'+
 								'<prop-fn v-else :propdef="prop" :fnenabled=true></prop-fn>'+
 							'</div>'+
 						'</accordion-item>'+

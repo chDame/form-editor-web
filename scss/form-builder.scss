@@ -169,3 +169,32 @@ main {
 	background-color: rgba(255,204,128,1) !important;
 	margin:10px 0;
 }
+
+.autocomplete {
+	position: relative;
+
+	.autocomplete-results {
+		position:absolute;
+		padding: 0;
+		margin: 0;
+		border: 1px solid #eeeeee;
+		width: 193px;
+		max-height:150px;
+		overflow: auto;
+		background:white;
+		color: black;
+		z-index: 999;
+	  
+		.autocomplete-result {
+			list-style: none;
+			text-align: left;
+			padding: 4px 2px;
+			cursor: pointer;
+		}
+
+		.autocomplete-result:hover {
+			background-color: #aaccee;
+			color: white;
+		}
+    }
+}

@@ -59,8 +59,8 @@ Vue.component('prop-fn', {
   },
   watch: {
    	propdef: function(newVal, oldVal) {
-		this.condition=this.propdef.condition,
-		this.field=this.$store.currentField,
+		this.condition=this.propdef.condition;
+		this.field=this.$store.currentField;
 		this.littType=newVal.type=='text'?'abc':newVal.type=='number'?'123':'bool';
 		this.valueType=this.$store.currentField.propsFn[this.propdef.name] && this.$store.currentField.propsFn[this.propdef.name].active?'f(x)':this.littType;  
     }
@@ -93,4 +93,61 @@ Vue.component('prop-fn', {
 Vue.component('prop-list', {
   template: "<div class='mb-1'><label class='form-label'>{{propdef.name}}</label><select class='form-select' v-model='$store.currentField.props[propdef.name]'><option v-for='(value, i) in propdef.values'>{{value}}</option></select></div>",
   props: ['propdef']
+})
+
+Vue.component('prop-binding', {
+  template:"<div class='property-field autocomplete'><label class='form-label'>{{propdef.name}}</label>"+
+  "<div class='input-group mb-1'><span class='input-group-text'><i class='bi bi-link-45deg'></i></span>"+
+    "<input v-model='$store.currentField.binding[propdef.name]' @input='onChange' @keydown.down='onArrowDown' @keydown.up='onArrowUp' @keydown.enter='onEnter' type='text' class='form-control'/>"+
+  "</div><ul v-show='isOpen' class='autocomplete-results'>"+
+       "<li v-for='(result, i) in results' :key='i' @click='setResult(result)' class='autocomplete-result' :class='{ \"is-active\": i === arrowCounter }'>{{ result.name }}</li>"+
+    "</ul></div>",
+  props: ['propdef'],
+  data() {
+    return {
+      results: [],
+      isOpen: false,
+      arrowCounter: -1
+    }
+  },
+  methods: {
+	filterResults() {
+      this.results = this.$store.form.data.filter(item => item.name.toLowerCase().indexOf(this.$store.currentField.binding[this.propdef.name].toLowerCase()) > -1);
+    },
+    onChange() {
+      this.filterResults();
+      this.isOpen = true;
+    },
+    setResult(result) {
+      this.$store.currentField.binding[this.propdef.name] = result.name;
+      this.isOpen = false;
+    },
+    handleClickOutside(event) {
+      if (!this.$el.contains(event.target)) {
+        this.arrowCounter = -1;
+        this.isOpen = false;
+      }
+    },
+    onArrowDown() {
+      if (this.arrowCounter < this.results.length) {
+        this.arrowCounter = this.arrowCounter + 1;
+      }
+    },
+    onArrowUp() {
+      if (this.arrowCounter > 0) {
+        this.arrowCounter = this.arrowCounter - 1;
+      }
+    },
+    onEnter() {
+      this.$store.currentField.binding[this.propdef.name] = this.results[this.arrowCounter].name;
+      this.arrowCounter = -1;
+      this.isOpen = false;
+    }
+  },
+  mounted() {
+    document.addEventListener('click', this.handleClickOutside);
+  },
+  destroyed() {
+    document.removeEventListener('click', this.handleClickOutside);
+  }
 })
