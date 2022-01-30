@@ -57,9 +57,11 @@ Vue.component('prop-fn', {
 		  modal.show();
 	  }
   },
-  watch: { 
-   	propdef: function(newVal, oldVal) { // watch it
-        this.littType=newVal.type=='text'?'abc':newVal.type=='number'?'123':'bool';
+  watch: {
+   	propdef: function(newVal, oldVal) {
+		this.condition=this.propdef.condition,
+		this.field=this.$store.currentField,
+		this.littType=newVal.type=='text'?'abc':newVal.type=='number'?'123':'bool';
 		this.valueType=this.$store.currentField.propsFn[this.propdef.name] && this.$store.currentField.propsFn[this.propdef.name].active?'f(x)':this.littType;  
     }
   },
