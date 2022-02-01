@@ -1,64 +1,128 @@
-window.customwidgets = [{ 
-		'type':'contentWidget',
-		'nature': 'panel-element2',
-		'display': 'Panel2',
-		'sizeable': false,
-		'icon' : 'rowwidget',
-		'propsDef':[{
-			'name':'title',
-			'type': 'text',
-			'default': 'panel'
-		}]
-	},{ 
-		'type':'widget',
-		'nature': 'checkbox-element2',
-		'display': 'CheckBox2',
-		'sizeable': true,
-		'icon' : 'bi bi-check-square',
-		'props': {
-			'id':'checkbox',
-			'class': '',
-			'label': 'label',
-			'required': true,
-			'disabled': false,
-			'hidden': false,
-			
-		},
-		'propsDef':[
-			{
-				'name':'required',
-				'type': 'boolean',
-				'default': true
-			},
-			{
-				'name':'disabled',
-				'type': 'boolean',
-				'default': false
-			},
-			{
-				'name':'class',
-				'type': 'text'
-			},
-			{
-				'name':'label',
+window.widgets = {
+	customWidgets: [],
+	containers: [
+		{
+			'type':'contentWidget',
+			'nature': 'panel-element',
+			'display': 'Panel2',
+			'sizeable': false,
+			'icon' : 'rowwidget',
+			'template': '<div class="card {{props.class}}">'+
+			  '<div class="card-header">{{props.title}}</div>'+
+			  '<div class="card-body">'+
+				'<form-content :content="props.content" classname="row"></form-content>'+
+			  '</div>'+
+			'</div>',
+			'propsDef':[{
+				'name':'title',
 				'type': 'text',
-				'default':'label'
-			}
-		]					
-	}
-]
-
-Vue.component('checkbox-element2', {
-  template: '<div class="form-check mb-1"><input class="form-check-input" type="checkbox"><label class="form-check-label">{{props.label}}</label></div>',
-  props: ['props']
-})
-
-Vue.component('panel-element2', {
-  template: '<div class="card {{props.class}}">'+
-  '<div class="card-header">{{props.title}}</div>'+
-  '<div class="card-body">'+
-    '<form-content :content="props.content" classname="row" rowcontainer="true"></form-content>'+
-  '</div>'+
-'</div>',
-  props: ['props']
-})
+				'default':'panel'
+			}]
+		},
+		{
+			'type':'contentWidget',
+			'nature': 'row-element',
+			'template': '<form-content :content="props.content" classname="row"></form-content>',
+			'propsDef':[]
+		}
+	],
+	widgets: [
+		{ 
+			'type':'widget',
+			'nature': 'input-element',
+			'display': 'Input2',
+			'sizeable': true,
+			'icon' : 'bi bi-input-cursor-text',
+			'template': "<div><div class='mb-3' v-if='!props.icon'><label :for='props.id' class='form-label'>{{props.label}}</label><input :id='props.id' :type='props.type' class='form-control' :placeholder='props.placeholder' v-model='props.value'></input></div>"+
+					"<label v-if='props.icon' :for='props.id' class='form-label'>{{props.label}}</label><div v-if='props.icon' class='input-group mb-3'><span class='input-group-text'><i :class='props.icon'/></span><input :type='props.type' class='form-control' :id='props.id':placeholder='props.placeholder' v-model='props.value'></div></div>",
+			'propsDef':[
+				{
+					'name':'required',
+					'type': 'boolean',
+					'default':true
+				},
+				{
+					'name':'disabled',
+					'type': 'boolean',
+					'default':false
+				},
+				{
+					'name':'type',
+					'type': 'list',
+					'values' : ['text', 'number', 'email', 'password'],
+					'default':'text'
+				},
+				{
+					'name':'icon',
+					'type': 'text',
+					'default' : 'bi bi-input-cursor-text'
+				},
+				{
+					'name':'label',
+					'type': 'text',
+					'default' : 'label :',
+				},
+				{
+					'name':'value',
+					'type': 'binding'
+				},
+				{
+					'name':'labelPosition',
+					'type': 'list',
+					'values' : ['top', 'left'],
+					'default': 'top'
+				},
+				{
+					'name':'placeholder',
+					'type': 'text',
+					'default':'placeholder'
+				},
+				{
+					'name':'min',
+					'type': 'number',
+					'condition':'field.props.type=="number"'
+				},
+				{
+					'name':'max',
+					'type': 'number',
+					'condition':'field.props.type=="number"'
+				},
+				{
+					'name':'minlength',
+					'type': 'number',
+					'condition':'field.props.type!="number"'
+				},
+				{
+					'name':'maxlength',
+					'type': 'number',
+					'condition':'field.props.type!="number"'
+				}
+			]					
+		},
+		{ 
+			'type':'widget',
+			'nature': 'checkbox-element',
+			'display': 'CheckBox2',
+			'sizeable': true,
+			'icon' : 'bi bi-check-square',
+			'template': '<div class="form-check mb-1"><input class="form-check-input" type="checkbox"><label class="form-check-label">{{props.label}}</label></div>',
+			'propsDef':[
+				{
+					'name':'required',
+					'type': 'boolean',
+					'default': true
+				},
+				{
+					'name':'disabled',
+					'type': 'boolean',
+					'default': false
+				},
+				{
+					'name':'label',
+					'type': 'text',
+					'default': 'label'
+				}
+			]					
+		}
+	]
+}

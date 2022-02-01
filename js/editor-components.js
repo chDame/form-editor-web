@@ -37,10 +37,8 @@ Vue.component('widgets-list',{
 			clone.props.sm=12;
 			clone.props.xs=12;
 		}
-			console.log(clone);
 		for(i=0;i < clone.propsDef.length; i++) {
 			prop = clone.propsDef[i];
-			console.log(prop);
 			if (prop.default) {
 				clone.props[prop.name]=prop.default;
 			}
@@ -88,10 +86,10 @@ Vue.component('properties-side-bar',{
 						'<accordion-item itemid="properties-display" title="Display" :show=true>'+
 							'<prop-fn :propdef="{\'name\':\'hidden\', \'type\':\'boolean\'}" :fnenabled=true></prop-fn>'+
 							'<prop-fn :propdef="{\'name\':\'class\', \'type\':\'text\'}" :fnenabled=true></prop-fn>'+
-							'<display-comp icon="phone" property="xs"></display-comp>'+
-							'<display-comp icon="tablet-landscape" property="sm"></display-comp>'+
-							'<display-comp icon="laptop" property="md"></display-comp>'+
-							'<display-comp icon="display" property="lg"></display-comp>'+
+							'<display-comp icon="phone" property="xs" v-if="$store.currentField.props.xs"></display-comp>'+
+							'<display-comp icon="tablet-landscape" property="sm" v-if="$store.currentField.props.sm"></display-comp>'+
+							'<display-comp icon="laptop" property="md" v-if="$store.currentField.props.md"></display-comp>'+
+							'<display-comp icon="display" property="lg" v-if="$store.currentField.props.lg"></display-comp>'+
 						'</accordion-item>'+
 						'<accordion-item itemid="properties-other" title="Other" :show=true>'+
 							'<div v-for="prop in $store.fieldTypeMap[$store.currentField.nature]">'+

@@ -3,17 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="test/axios-0.24.0.min.js"></script>
     <script src="dist/FormEditor-full.bundle.min.js"></script>
 	
 	<!--link href="dist/FormEditor-full.css" rel="stylesheet"-->
 </head>
 <body>
 <script>
-
-let saveMethod = function(form) {
-	
-}
 
 Vue.component('my-menu',{ template: '<div class="dropdown">'+
 			 ' <button class="btn btn-outline-light dropdown-toggle" type="button" id="menuEditor" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Ed!t0r</button>'+
@@ -107,7 +102,7 @@ Vue.component('my-menu',{ template: '<div class="dropdown">'+
   }
 });
 			
-formEditor.builder().setRoot(document.body).setMenu('my-menu').setCustomWidgetUrl('./test/customWidgets.txt').build();
+formEditor.builder().setRoot(document.body).setMenu('my-menu')/*.setWidgetUrl('./test/customWidgets.txt')*/.build();
 </script>
 
 </body>
