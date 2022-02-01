@@ -20,22 +20,35 @@ Vue.component('my-header',{ template: '<nav class="navbar navbar-light bg-dark t
  });
 Vue.component('widgets-list',{
   template: '<draggable :list="list" :group="{ name: \'form\', pull: \'clone\', put: false}" :clone="cloneWidget">'+
-				'<div v-for="widget in list" class="widgetbtn"><i :class="\'widgetIcon \'+widget.props.icon"></i>{{ widget.display }}</div>'+
+				'<div v-for="widget in list" class="widgetbtn"><i :class="\'widgetIcon \'+widget.icon"></i>{{ widget.display }}</div>'+
 			'</draggable>',
   props: ['list'],
   methods: {
 	cloneWidget(obj) {
 		var clone = JSON.parse(JSON.stringify(obj));
-		delete clone.propsDef;
+		
+		clone.props={};
+		if (clone.type=='contentWidget') {
+			clone.props.content=[];
+		}
 		if (clone.sizeable) {
 			clone.props.lg=12;
 			clone.props.md=12;
 			clone.props.sm=12;
 			clone.props.xs=12;
 		}
+			console.log(clone);
+		for(i=0;i < clone.propsDef.length; i++) {
+			prop = clone.propsDef[i];
+			console.log(prop);
+			if (prop.default) {
+				clone.props[prop.name]=prop.default;
+			}
+		}
 		clone.propsFn={};
 		clone.binding={};
-		clone.props.id = clone.display+(this.$store.globalId++);
+		clone.props.id = 'widget'+(this.$store.globalId++);
+		delete clone.propsDef;
 		return clone;
 	}
   }
@@ -74,6 +87,7 @@ Vue.component('properties-side-bar',{
 						'</accordion-item>'+
 						'<accordion-item itemid="properties-display" title="Display" :show=true>'+
 							'<prop-fn :propdef="{\'name\':\'hidden\', \'type\':\'boolean\'}" :fnenabled=true></prop-fn>'+
+							'<prop-fn :propdef="{\'name\':\'class\', \'type\':\'text\'}" :fnenabled=true></prop-fn>'+
 							'<display-comp icon="phone" property="xs"></display-comp>'+
 							'<display-comp icon="tablet-landscape" property="sm"></display-comp>'+
 							'<display-comp icon="laptop" property="md"></display-comp>'+

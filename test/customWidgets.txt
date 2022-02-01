@@ -3,25 +3,20 @@ window.customwidgets = [{
 		'nature': 'panel-element2',
 		'display': 'Panel2',
 		'sizeable': false,
-		'props': {
-			'id':'panel',
-			'title': 'panel',
-			'content':[],
-			'icon' : 'rowwidget',
-			'class': ''
-		},
+		'icon' : 'rowwidget',
 		'propsDef':[{
 			'name':'title',
-			'type': 'text'
+			'type': 'text',
+			'default': 'panel'
 		}]
 	},{ 
 		'type':'widget',
 		'nature': 'checkbox-element2',
 		'display': 'CheckBox2',
 		'sizeable': true,
+		'icon' : 'bi bi-check-square',
 		'props': {
 			'id':'checkbox',
-			'icon' : 'bi bi-check-square',
 			'class': '',
 			'label': 'label',
 			'required': true,
@@ -32,11 +27,13 @@ window.customwidgets = [{
 		'propsDef':[
 			{
 				'name':'required',
-				'type': 'boolean'
+				'type': 'boolean',
+				'default': true
 			},
 			{
 				'name':'disabled',
-				'type': 'boolean'
+				'type': 'boolean',
+				'default': false
 			},
 			{
 				'name':'class',
@@ -44,7 +41,8 @@ window.customwidgets = [{
 			},
 			{
 				'name':'label',
-				'type': 'text'
+				'type': 'text',
+				'default':'label'
 			}
 		]					
 	}

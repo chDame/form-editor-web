@@ -72,16 +72,11 @@ export function builder() {
 							'nature': 'panel-element',
 							'display': 'Panel',
 							'sizeable': false,
-							'props': {
-								'id':'panel',
-								'title': 'panel',
-								'content':[],
-								'icon' : 'rowwidget',
-								'class': ''
-							},
+							'icon' : 'rowwidget',
 							'propsDef':[{
 								'name':'title',
-								'type': 'text'
+								'type': 'text',
+								'default':'panel'
 							}]
 						}],
 						widgets: [{ 
@@ -89,62 +84,48 @@ export function builder() {
 							'nature': 'input-element',
 							'display': 'Input',
 							'sizeable': true,
-							'props': {
-								'id':'input',
-								'type': 'text',
-								'icon' : 'bi bi-input-cursor-text',
-								'class': '',
-								'label': 'label :',
-								'value': null,
-								'labelPosition': 'top',
-								'placeholder': 'placeholder',
-								'min': null,
-								'max': null,
-								'minlength': null,
-								'maxlength': null,
-								'required': true,
-								'disabled': false,
-								'hidden': false,
-								
-							},
+							'icon' : 'bi bi-input-cursor-text',
 							'propsDef':[
 								{
 									'name':'required',
-									'type': 'boolean'
+									'type': 'boolean',
+									'default':true
 								},
 								{
 									'name':'disabled',
-									'type': 'boolean'
+									'type': 'boolean',
+									'default':false
 								},
 								{
 									'name':'type',
 									'type': 'list',
-									'values' : ['text', 'number', 'email', 'password']
+									'values' : ['text', 'number', 'email', 'password'],
+									'default':'text'
 								},
 								{
 									'name':'icon',
-									'type': 'text'
-								},
-								{
-									'name':'class',
-									'type': 'text'
+									'type': 'text',
+									'default' : 'bi bi-input-cursor-text'
 								},
 								{
 									'name':'label',
 									'type': 'text',
+									'default' : 'label :',
 								},
 								{
 									'name':'value',
-									'type': 'binding',
+									'type': 'binding'
 								},
 								{
 									'name':'labelPosition',
 									'type': 'list',
-									'values' : ['top', 'left']
+									'values' : ['top', 'left'],
+									'default': 'top'
 								},
 								{
 									'name':'placeholder',
-									'type': 'text'
+									'type': 'text',
+									'default':'placeholder'
 								},
 								{
 									'name':'min',
@@ -172,32 +153,22 @@ export function builder() {
 							'nature': 'checkbox-element',
 							'display': 'CheckBox',
 							'sizeable': true,
-							'props': {
-								'id':'checkbox',
-								'icon' : 'bi bi-check-square',
-								'class': '',
-								'label': 'label',
-								'required': true,
-								'disabled': false,
-								'hidden': false,
-								
-							},
+							'icon' : 'bi bi-check-square',
 							'propsDef':[
 								{
 									'name':'required',
-									'type': 'boolean'
+									'type': 'boolean',
+									'default': true
 								},
 								{
 									'name':'disabled',
-									'type': 'boolean'
-								},
-								{
-									'name':'class',
-									'type': 'text'
+									'type': 'boolean',
+									'default': false
 								},
 								{
 									'name':'label',
-									'type': 'text'
+									'type': 'text',
+									'default': 'label'
 								}
 							]					
 						},{
@@ -205,33 +176,33 @@ export function builder() {
 							'nature': 'button-element',
 							'display': 'Button',
 							'sizeable': true,
-							'props': {
-								'id':'button',
-								'icon': 'bi bi-send',
-								'label': 'button',
-								'class': '',
-								'style': 'primary',
-								'outlined': false,
-								'disabled': false,
-								'hidden': false,
-							},
+							'icon': 'bi bi-send',
 							'propsDef':[
 								{
 									'name':'disabled',
-									'type': 'boolean'
+									'type': 'boolean',
+									'default': false
+								},
+								{
+									'name':'icon',
+									'type': 'text',
+									'default': 'bi bi-send'
 								},
 								{
 									'name':'label',
-									'type': 'text'
+									'type': 'text',
+									'default': 'button'
 								},
 								{
 									'name':'style',
 									'type': 'list',
-									'values' : ['primary', 'secondary','info','success','warning','danger']
+									'values' : ['primary', 'secondary','info','success','warning','danger'],
+									'default': 'primary'
 								},
 								{
 									'name':'outlined',
-									'type': 'boolean'
+									'type': 'boolean',
+									'default': false
 								}
 							]
 						}]

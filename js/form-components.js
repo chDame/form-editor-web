@@ -91,6 +91,9 @@ Vue.component('form-field',{
 		if (this.$store.currentField && this.$store.currentField.props.id == this.field.props.id) {
 			className+=' currentField';
 		}
+		if (this.field.props.class) {
+			className=this.field.props.class+' '+className;
+		}
 		return className;
 	}
   }
