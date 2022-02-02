@@ -37,6 +37,3 @@ window.widgets = {
 			"type":"contentWidget",
 			...
 ```
-
-
-```
