@@ -1,10 +1,10 @@
 Vue.component('form-content',{
-  template: '<div :class="classname"><draggable v-if="!$store.preview" :list="content" class="dragArea row" group="form" ghost-class="ghost" @change="verifyRow">'+
+  template: '<div><draggable v-if="!$store.preview" :list="content" class="dragArea row" group="form" ghost-class="ghost" @change="verifyRow">'+
 					'<form-field v-for="(field, i) in content" :field="field" :index="i" @send-deletion="deletion"></form-field>'+
 				'</draggable>'+
 				'<form-field v-if="$store.preview" v-for="(field, i) in content" :index="i" :field="field"></form-field>'+
 			'</div>',
-  props: ['content', 'classname'],
+  props: ['content'],
   methods: {
 	deletion(value) {
 		console.log(value);

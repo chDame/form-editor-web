@@ -106,7 +106,7 @@ Vue.component('properties-side-bar',{
   
 Vue.component('data-panel',{
   template: '<div id="data-panel" class="card collapse collapse-vertical show">'+
-	'<div class="card-header bg-secondary text-light d-flex justify-content-between" @drag="drag" @dragend="release" draggable=true><span>Data Panel</span>'+
+	'<div class="card-header bg-secondary text-light d-flex justify-content-between" @drag="drag" @dragend="release" draggable=true><span>Data store</span>'+
 		'<button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#dataModal"><i class="bi bi-plus-lg"></i></button>'+
 	'</div>'+
 	'<div class="card-body" :style="style"><table class="table table-dark table-striped table-hover">'+
@@ -124,7 +124,7 @@ Vue.component('data-panel',{
   '</div>',
   data() {
     return {
-      height: 100,
+      height: this.$store.datapanelheight,
 	  clientY:null
 	}
   },
@@ -147,6 +147,7 @@ Vue.component('data-panel',{
 	  release: function(evt){
 		  this.height=this.height-evt.clientY+this.clientY;
 		  this.clientY=null;
+		  Vue.set(this.$store,'datapanelheight', this.height);
 	  }
   },
   computed: {

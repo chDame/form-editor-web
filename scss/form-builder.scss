@@ -89,9 +89,6 @@ nav {
 main {
 	position: relative;
 	background: #fff;
-    height: calc(100vh - 55px);
-    overflow: auto;
-    padding-bottom: 30px;
 }
 .form-label.required:after {
   content:"*";
@@ -116,32 +113,37 @@ main {
 	margin:6px auto;
 }
 .edition {
-	padding: 0px 25px 0px 0px;
+	padding: 0px 10px 0px 0px;
+	overflow: auto;
+
+	.form-field {
+		position: relative;
+		border: 1px blue dotted;
+		padding: 2px;
+		margin-bottom: 15px !important;
+		background: #EFEFEF;
+		span.form-field-type {
+			position: absolute;
+			top: -11px;
+			background: lightgrey;
+			font-size: 0.7em;
+		}
+	
+		&.row-element {
+			border-left: 6px solid #6699cc;
+			padding-left: 5px;
+			border-top: 0px;
+			border-right: 0px;
+			border-bottom: 0px;
+			box-shadow: none;
+			
+			> span.form-field-type {
+				display:none;
+			}
+		}
+	}
 }
-.edition .form-field {
-	position: relative;
-	border: 1px blue dotted;
-	padding: 2px;
-	margin-bottom: 15px !important;
-	background: #EFEFEF;
-}
-.edition .form-field.row-element {
-    border-left: 6px solid #6699cc;
-    padding-left: 5px;
-    border-top: 0px;
-    border-right: 0px;
-    border-bottom: 0px;
-    box-shadow: none;
-}
-.edition span.form-field-type {
-	position: absolute;
-	top: -11px;
-	background: lightgrey;
-	font-size: 0.7em;
-}
-.edition .form-field.row-element > span.form-field-type {
-    display:none;
-}
+
 .preview span.form-field-type {
 	display:none;
 }
@@ -151,8 +153,9 @@ main {
 	
 }
 .dragArea.row {
-	padding: 5px 0px 5px 25px !important;
+	padding: 5px 0px 5px 15px !important;
     min-height: 50px;
+	margin-right: 0px;
 }
 .dragArea.highlight {
 	background-color: rgba(255,204,128,0.6) !important;

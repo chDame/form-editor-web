@@ -5,10 +5,10 @@ let template = '<my-header apptitle="Ed!t0r"></my-header>'+
 				'<widget-side-bar :containers="containers" :widgets="widgets" :customwidgets="customWidgets"></widget-side-bar>'+
 			'</div>'+
 			'<main class="col ps-md-2 pt-2">'+
-				'<div :class="[$store.preview ? \'p-3 bg-light border rounded preview\' : \'bg-light border rounded edition\']">'+
+				'<div :class="[$store.preview ? \'p-3 bg-light border rounded preview\' : \'bg-light border rounded edition\']" :style="editionHeight">'+
 					'<form-content :content="$store.form.content"></form-content>'+
 				'</div>'+
-				'<data-panel></data-panel>'+
+				'<data-panel v-if="!$store.preview"></data-panel>'+
 			'</main>'+
 			'<div  v-if="!$store.preview" class="col-auto px-0">'+
 				'<properties-side-bar></properties-side-bar>'+
@@ -18,7 +18,6 @@ let template = '<my-header apptitle="Ed!t0r"></my-header>'+
 	'<data-modal></data-modal>'+
 	'<fn-prop-modal></fn-prop-modal>';
 
-window.dropZone = null;
 
 export function builder() {
 
@@ -60,6 +59,7 @@ export function builder() {
 				currentData:null,
 				fieldTypeMap:[],
 				menu: menu,
+				datapanelheight: 100
 			});
 			let vm = new Vue({
 				el: '#editorApp',
@@ -100,6 +100,15 @@ export function builder() {
 				},
 				beforeMount: function(){
 					this.loadWidgetMap();
+				},
+				computed: {
+					editionHeight() {
+						if (this.$store.preview) {
+							return "height: calc(100vh - 80px)";
+						} else {
+							return "height: calc(100vh - "+(this.$store.datapanelheight+125)+"px)";
+						}
+					}
 				}
 			});
 			
