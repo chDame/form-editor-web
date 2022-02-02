@@ -142,7 +142,6 @@ Vue.component('data-panel',{
 			  this.height=this.height-evt.clientY+this.clientY;
 		  }
 		  this.clientY=evt.clientY;
-		  console.log(evt);
 	  },
 	  release: function(evt){
 		  this.height=this.height-evt.clientY+this.clientY;
