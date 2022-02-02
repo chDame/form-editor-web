@@ -8,10 +8,10 @@ module.exports = {
    entry: ["./scss/form-builder.scss", "./scss/codemirror.scss", "./scss/bootstrap-5.0.2/bootstrap.scss", "./scss/font/bootstrap-icons-1.7.2.scss", './js/form-components.js', './js/editor-components.js', './js/components.js', './js/editor-props.js', './js/form-builder.js'],
    mode: 'production',
    output: {
-    filename: 'FormEditor.bundle.js',
+    filename: 'vuizer.bundle.js',
     path: path.resolve(__dirname, 'dist'),
 	library: {
-      name: 'formEditor',
+      name: 'vuizer',
       type: 'umd',
     }
   },
@@ -23,8 +23,8 @@ module.exports = {
     new WebpackConcatPlugin({
       bundles: [
         {
-          dest: './dist/FormEditor-full.bundle.min.js',
-          src: ['./assets/js/*.min.js', './dist/FormEditor.bundle.js']
+          dest: './dist/vuizer-full.bundle.min.js',
+          src: ['./assets/js/*.min.js', './dist/vuizer.bundle.js']
 		  /*transforms: {
             after: async (code) => {
               const minifiedCode = await terser.minify(code);

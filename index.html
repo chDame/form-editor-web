@@ -2,16 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="dist/FormEditor-full.bundle.min.js"></script>
-	
-	<!--link href="dist/FormEditor-full.css" rel="stylesheet"-->
+    <title>VUIzer</title>
+    <script src="dist/vuizer-full.bundle.min.js"></script>
+
 </head>
 <body>
 <script>
 
 Vue.component('my-menu',{ template: '<div class="dropdown">'+
-			 ' <button class="btn btn-outline-light dropdown-toggle" type="button" id="menuEditor" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Ed!t0r</button>'+
+			 ' <button class="btn btn-outline-light dropdown-toggle" type="button" id="menuEditor" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">VUIzer</button>'+
 			  '<div class="dropdown-menu" aria-labelledby="menuEditor">'+
 				'<div class="dropdown-item">'+
 					'<div class="input-group">'+
@@ -101,8 +100,9 @@ Vue.component('my-menu',{ template: '<div class="dropdown">'+
 	})
   }
 });
-			
-formEditor.builder().setRoot(document.body).setMenu('my-menu')/*.setWidgetUrl('./test/customWidgets.txt')*/.build();
+
+//vuizer.builder().setRoot(document.body).setMenu('my-menu').setWidgetUrl('./test/customWidgets.txt').build();
+vuizer.builder().setRoot(document.body).setMenu('my-menu').setWidgetUrl('http://localhost:8080/edition/components.js').build();
 </script>
 
 </body>

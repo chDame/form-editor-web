@@ -1,4 +1,4 @@
-let template = '<my-header apptitle="Ed!t0r"></my-header>'+
+let template = '<my-header apptitle="VUIzer"></my-header>'+
 	'<div class="container-fluid bg-secondary">'+
 		'<div class="row flex-nowrap">'+
 			'<div class="col-auto px-0" v-if="!$store.preview" >'+
