@@ -75,14 +75,16 @@ export function builder() {
 				},
 				methods: {
 					buildSubWidgetMap: function(source, target) {
-						for (let i=0; i<source.length; i++) {
-							Vue.component(source[i].nature, {template:source[i].template,
-							  props: ['props']
-							});
-							let clone = JSON.parse(JSON.stringify(source[i]));
-							delete clone.template;
-							target.push(clone);
-							this.$store.fieldTypeMap[clone.nature]=clone.propsDef;
+						if (source) {
+							for (let i=0; i<source.length; i++) {
+								Vue.component(source[i].nature, {template:source[i].template,
+								  props: ['props']
+								});
+								let clone = JSON.parse(JSON.stringify(source[i]));
+								delete clone.template;
+								target.push(clone);
+								this.$store.fieldTypeMap[clone.nature]=clone.propsDef;
+							}
 						}
 					},
 					loadWidgetMap: function() {
