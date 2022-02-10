@@ -20,7 +20,7 @@ Vue.component('my-header',{ template: '<nav class="navbar navbar-light bg-dark t
  });
 Vue.component('widgets-list',{
   template: '<draggable :list="list" :group="{ name: \'form\', pull: \'clone\', put: false}" :clone="cloneWidget">'+
-				'<div v-for="widget in list" class="widgetbtn"><i :class="\'widgetIcon \'+widget.icon"></i>{{ widget.display }}</div>'+
+				'<div v-for="widget in list" class="widgetbtn" v-if="widget.icon"><i :class="\'widgetIcon \'+widget.icon"></i>{{ widget.display }}</div>'+
 			'</draggable>',
   props: ['list'],
   methods: {
@@ -45,7 +45,7 @@ Vue.component('widgets-list',{
 		}
 		clone.propsFn={};
 		clone.binding={};
-		clone.props.id = 'widget'+(this.$store.globalId++);
+		clone.props.id = 'widget'+Date.now();
 		delete clone.propsDef;
 		return clone;
 	}

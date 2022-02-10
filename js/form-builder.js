@@ -48,7 +48,6 @@ export function builder() {
 		
 		buildVueEditor: function(menu){
 			Vue.prototype.$store = Vue.observable({
-				globalId:0,
 				preview: false,
 				form: {'id':null,
 					'name': 'newForm',

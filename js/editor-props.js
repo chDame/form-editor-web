@@ -91,12 +91,32 @@ Vue.component('prop-fn', {
   }
 })
 Vue.component('prop-list', {
-  template: "<div class='mb-1'><label class='form-label'>{{propdef.name}}</label><select class='form-select' v-model='$store.currentField.props[propdef.name]'><option v-for='(value, i) in propdef.values'>{{value}}</option></select></div>",
-  props: ['propdef']
+  template: "<div class='mb-1' v-if='display'><label class='form-label'>{{propdef.name}}</label><select class='form-select' v-model='$store.currentField.props[propdef.name]'><option v-for='(value, i) in propdef.values'>{{value}}</option></select></div>",
+  props: ['propdef'],
+  data() {
+	  return {
+		  condition:this.propdef.condition,
+		  field:this.$store.currentField
+	  }
+  },
+  computed:{
+	display(){
+    	with(this){
+      	try{
+			if (!condition) {
+				return true;
+			}
+        	return eval(condition);
+        } catch(error){
+        	console.log(error.message);
+        }      	
+      }
+    }
+  }
 })
 
 Vue.component('prop-binding', {
-  template:"<div class='property-field autocomplete'><label class='form-label'>{{propdef.name}}</label>"+
+  template:"<div v-if='display' class='property-field autocomplete'><label class='form-label'>{{propdef.name}}</label>"+
   "<div class='input-group mb-1'><span class='input-group-text'><i class='bi bi-link-45deg'></i></span>"+
     "<input v-model='$store.currentField.binding[propdef.name]' @input='onChange' @keydown.down='onArrowDown' @keydown.up='onArrowUp' @keydown.enter='onEnter' type='text' class='form-control'/>"+
   "</div><ul v-show='isOpen' class='autocomplete-results'>"+
@@ -105,6 +125,8 @@ Vue.component('prop-binding', {
   props: ['propdef'],
   data() {
     return {
+	  condition:this.propdef.condition,
+	  field:this.$store.currentField,
       results: [],
       isOpen: false,
       arrowCounter: -1
@@ -142,6 +164,20 @@ Vue.component('prop-binding', {
       this.$store.currentField.binding[this.propdef.name] = this.results[this.arrowCounter].name;
       this.arrowCounter = -1;
       this.isOpen = false;
+    }
+  },
+  computed:{
+	display(){
+    	with(this){
+      	try{
+			if (!condition) {
+				return true;
+			}
+        	return eval(condition);
+        } catch(error){
+        	console.log(error.message);
+        }      	
+      }
     }
   },
   mounted() {

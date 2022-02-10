@@ -141,6 +141,22 @@ main {
 				display:none;
 			}
 		}
+		
+		
+		&.modal-element > .modal {
+			opacity: 1;
+			display: block;
+			position: relative;
+			z-index: 1;
+			
+			/*not remove body or footer*/
+			.modal-content > div > .form-field > span.form-field-type i {
+				display:none;
+			}
+			.modal-footer > div {
+				width: 100%;
+			}
+		}
 	}
 }
 

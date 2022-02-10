@@ -7,7 +7,7 @@ window.defaultcomponents = {
 			'display': 'Panel',
 			'sizeable': false,
 			'icon' : 'rowwidget',
-			'template': '<div class="card {{props.class}}">'+
+			'template': '<div class="card">'+
 			  '<div class="card-header">{{props.title}}</div>'+
 			  '<div class="card-body">'+
 				'<form-content :content="props.content" classname="row"></form-content>'+
